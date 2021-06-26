@@ -10,6 +10,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
@@ -74,8 +75,8 @@ public class JyUtils {
         JSONParser jsonParser = new JSONParser();
         FileReader reader;
         try {
-            reader = new FileReader(filename);
-        } catch (FileNotFoundException e) {
+            reader = new FileReader(filename, StandardCharsets.UTF_8);
+        } catch (IOException e) {
             throw new JySrtToolsException("開啟草稿檔案錯誤! " + System.lineSeparator() + e.getMessage(), e);
         }
 
@@ -136,7 +137,7 @@ public class JyUtils {
      * @throws JySrtToolsException save draft info json file fail
      */
     public static void saveDraft(JyDraft draft) throws JySrtToolsException {
-        try (FileWriter file = new FileWriter(draft.getInfoFilename())) {
+        try (FileWriter file = new FileWriter(draft.getInfoFilename(), StandardCharsets.UTF_8)) {
             file.write(draft.getInfo().toJSONString());
         } catch (IOException e) {
             throw new JySrtToolsException("儲存草稿資料錯誤! " + draft.getName() + System.lineSeparator() + e.getMessage(), e);
@@ -152,7 +153,7 @@ public class JyUtils {
      */
     public static void exportToSrt(JyDraft draft, String filename) throws JySrtToolsException {
         String srt = getDraftSubtitlesSRT(draft);
-        try (FileWriter file = new FileWriter(filename)) {
+        try (FileWriter file = new FileWriter(filename, StandardCharsets.UTF_8)) {
             file.write(srt);
         } catch (IOException e) {
             throw new JySrtToolsException("匯出 SRT 檔案錯誤s! " + draft.getName() + System.lineSeparator() + e.getMessage(), e);
