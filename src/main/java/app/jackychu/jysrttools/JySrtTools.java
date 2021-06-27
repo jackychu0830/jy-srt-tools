@@ -110,6 +110,29 @@ public class JySrtTools extends JFrame {
         var aboutMenuItem = new JMenuItem("關於");
         aboutMenuItem.setMnemonic(KeyEvent.VK_A);
         aboutMenuItem.setToolTipText("關於本程式");
+        aboutMenuItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Object[] options = {"知道了"};
+                ImageIcon icon = null;
+                try {
+                    Image image = ImageIO.read(Objects.requireNonNull(this.getClass().getClassLoader().getResourceAsStream("icon.png")));
+                    icon = new ImageIcon(new ImageIcon(image).getImage().getScaledInstance(96, 96, Image.SCALE_DEFAULT));
+
+                } catch (IOException ioe) {
+                    ioe.printStackTrace();
+                }
+
+                JOptionPane.showOptionDialog(JySrtTools.this,
+                        new AboutPanel(),
+                        "關於本程式",
+                        JOptionPane.OK_OPTION,
+                        JOptionPane.INFORMATION_MESSAGE,
+                        icon,
+                        options,
+                        options[0]);
+            }
+        });
         fileMenu.add(aboutMenuItem);
 
         var exiMenuItem = new JMenuItem("結束");
