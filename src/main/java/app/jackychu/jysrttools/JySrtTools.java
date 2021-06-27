@@ -51,7 +51,7 @@ public class JySrtTools extends JFrame {
     private void init() {
         setLayout(new BorderLayout());
 
-        setTitle("剪映字幕工具程式");
+        setTitle("剪映字幕工具箱");
         setSize(1280, 768);
         setMinimumSize(new Dimension(1080, 285));
         setLocationRelativeTo(null);
