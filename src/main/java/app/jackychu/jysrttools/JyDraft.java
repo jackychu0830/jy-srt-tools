@@ -72,7 +72,7 @@ public class JyDraft {
         for (Object track : tracks.toArray()) {
             JSONObject tk = (JSONObject) track;
             // only flag=1 and type=text is subtitle
-            if (!(tk.get("flag").toString().equals("1") && tk.get("type").toString().equals("text"))) continue;
+            if (!(tk.get("flag").toString().equals("2") && tk.get("type").toString().equals("text"))) continue;
             JSONArray segments = (JSONArray) tk.get("segments");
             for (Object segment : segments.toArray()) {
                 String materialId = ((JSONObject) segment).get("material_id").toString();
@@ -133,31 +133,40 @@ public class JyDraft {
             getDraftTexts();
         }
 
-        List<String> ids = new ArrayList<>();
-        // Find all text ids which is subtitle
-        JSONArray tracks = (JSONArray) this.info.get("tracks");
-        for (Object track : tracks.toArray()) {
-            JSONObject tk = (JSONObject) track;
-            // only flag=1 and type=text is subtitle
-            if (!(tk.get("flag").toString().equals("1") && tk.get("type").toString().equals("text"))) continue;
-            JSONArray segments = (JSONArray) tk.get("segments");
-            for (Object segment : segments.toArray()) {
-                String materialId = ((JSONObject) segment).get("material_id").toString();
-                if (this.texts.containsKey(materialId)) {
-                    ids.add(materialId);
-                }
-            }
-        }
-
-        // If text is subtitle then delete it
+        // Remove texts content
         JSONArray originTexts;
         originTexts = (JSONArray) ((JSONObject) this.info.get("materials")).get("texts");
         for (Object originText : originTexts.toArray()) {
-            String id = ((JSONObject) originText).get("id").toString();
-            if (ids.contains(id)) {
+            if (((JSONObject) originText).get("type").toString().equals("subtitle")) {
                 originTexts.remove(originText);
             }
         }
 
+        // Remove tracks
+        List<String> extraMaterialIds = new ArrayList<>();
+        JSONArray tracks = (JSONArray) this.info.get("tracks");
+        for (Object track : tracks.toArray()) {
+            JSONObject tk = (JSONObject) track;
+            // only flag=1 and type=text is subtitle
+            if (!(tk.get("flag").toString().equals("2") && tk.get("type").toString().equals("text"))) continue;
+            JSONArray segments = (JSONArray) tk.get("segments");
+            for (Object segment : segments.toArray()) {
+                String materialId = ((JSONObject) segment).get("material_id").toString();
+                if (this.texts.containsKey(materialId)) {
+                    String extraMaterialId = ((JSONArray) ((JSONObject) segment).get("extra_material_ids")).get(0).toString();
+                    extraMaterialIds.add(extraMaterialId);
+                    segments.remove(segment);
+                }
+            }
+        }
+
+        // Remove extra materials
+        JSONArray extraMaterials = (JSONArray) ((JSONObject) this.info.get("materials")).get("material_animations");
+        for (Object extra : extraMaterials.toArray()) {
+            JSONObject ex = (JSONObject) extra;
+            if (extraMaterialIds.contains(ex.get("id").toString())) {
+                extraMaterials.remove(ex);
+            }
+        }
     }
 }
