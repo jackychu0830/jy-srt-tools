@@ -133,8 +133,17 @@ public class JyDraft {
             getDraftTexts();
         }
 
-        List<String> ids = new ArrayList<>();
-        // Find all text ids which is subtitle
+        // Remove texts content
+        JSONArray originTexts;
+        originTexts = (JSONArray) ((JSONObject) this.info.get("materials")).get("texts");
+        for (Object originText : originTexts.toArray()) {
+            if (((JSONObject) originText).get("type").toString().equals("subtitle")) {
+                originTexts.remove(originText);
+            }
+        }
+
+        // Remove tracks
+        List<String> extraMaterialIds = new ArrayList<>();
         JSONArray tracks = (JSONArray) this.info.get("tracks");
         for (Object track : tracks.toArray()) {
             JSONObject tk = (JSONObject) track;
@@ -144,20 +153,22 @@ public class JyDraft {
             for (Object segment : segments.toArray()) {
                 String materialId = ((JSONObject) segment).get("material_id").toString();
                 if (this.texts.containsKey(materialId)) {
-                    ids.add(materialId);
+                    String extraMaterialId = ((JSONArray)((JSONObject) segment).get("extra_material_ids")).get(0).toString();
+                    extraMaterialIds.add(extraMaterialId);
+                    segments.remove(segment);
                 }
             }
         }
 
-        // If text is subtitle then delete it
-        JSONArray originTexts;
-        originTexts = (JSONArray) ((JSONObject) this.info.get("materials")).get("texts");
-        for (Object originText : originTexts.toArray()) {
-            String id = ((JSONObject) originText).get("id").toString();
-            if (ids.contains(id)) {
-                originTexts.remove(originText);
+        // Remove extra materials
+        JSONArray extraMaterials = (JSONArray) ((JSONObject) this.info.get("materials")).get("material_animations");
+        for(Object extra : extraMaterials.toArray()) {
+            JSONObject ex = (JSONObject) extra;
+            if (extraMaterialIds.contains(ex.get("id").toString())) {
+                extraMaterials.remove(ex);
             }
         }
+
 
     }
 }

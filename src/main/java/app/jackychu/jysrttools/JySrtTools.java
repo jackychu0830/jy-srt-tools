@@ -51,7 +51,7 @@ public class JySrtTools extends JFrame {
     private void init() {
         setLayout(new BorderLayout());
 
-        setTitle("剪映字幕工具箱");
+        setTitle("剪映字幕工具箱 Mac 版");
         setSize(1280, 768);
         setMinimumSize(new Dimension(1080, 285));
         setLocationRelativeTo(null);
@@ -126,7 +126,7 @@ public class JySrtTools extends JFrame {
                 JOptionPane.showOptionDialog(JySrtTools.this,
                         new AboutPanel(),
                         "關於本程式",
-                        JOptionPane.OK_OPTION,
+                        JOptionPane.DEFAULT_OPTION,
                         JOptionPane.INFORMATION_MESSAGE,
                         icon,
                         options,
