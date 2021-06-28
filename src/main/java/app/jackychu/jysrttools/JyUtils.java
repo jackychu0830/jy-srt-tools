@@ -1,6 +1,7 @@
 package app.jackychu.jysrttools;
 
 import app.jackychu.jysrttools.exception.JySrtToolsException;
+import org.apache.commons.lang3.StringUtils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -101,7 +102,8 @@ public class JyUtils {
         long sec = time / 1000 / 1000 % 60;
         long min = time / 1000 / 1000 / 60 % 60;
         long hour = time / 1000 / 1000 / 60 / 60;
-        return String.format("%02d:%02d:%02d,%02d", hour, min, sec, ms);
+        return String.format("%02d:%02d:%02d,%s", hour, min, sec,
+                StringUtils.rightPad(String.valueOf(ms), 3, "0"));
 
     }
 
