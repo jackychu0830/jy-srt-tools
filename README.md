@@ -10,4 +10,8 @@
 2. 下載剪映字幕工具箱式 [1.0.136 版](https://github.com/jackychu0830/jy-srt-tools/releases/download/1.0.136-Win/JySrtTools-1.0.136-Win.jar)
 3. 滑鼠雙擊 JySrtTools-1.0.136-Win.jar 執行程式
 
+## 執行畫面
 ![畫面](https://github.com/jackychu0830/jy-srt-tools/raw/win/screenshot-win.png)
+
+## 使用說明
+https://youtu.be/OJCRbiwMmlQ
