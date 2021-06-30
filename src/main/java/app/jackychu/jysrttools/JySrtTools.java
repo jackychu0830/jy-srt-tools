@@ -2,28 +2,41 @@ package app.jackychu.jysrttools;
 
 import app.jackychu.jysrttools.exception.JySrtToolsException;
 import app.jackychu.jysrttools.ui.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
-import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
-import java.awt.event.*;
-import java.io.File;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.io.IOException;
 import java.util.Map;
 import java.util.Objects;
 
 public class JySrtTools extends JFrame {
+    @Getter
     private Map<String, JyDraft> drafts;
+    @Getter
     private DraftListPanel listPanel;
+    @Getter
     private DraftTextsPanel textsPanel;
+    @Getter
     private DraftActionPanel actionPanel;
+    @Getter
+    @Setter
     private JyDraft currentSelectedDraft;
+    @Getter
     private TranslateProgressDialog progressDialog;
 
     public JySrtTools() {
-        loadDrafts();
-        init();
+        try {
+            loadDrafts();
+            init();
+        } catch (Throwable e) {
+            JOptionPane.showMessageDialog(this,
+                    new ErrorMessagePanel(e), "程式錯誤", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     public static void main(String[] args) {
@@ -39,15 +52,6 @@ public class JySrtTools extends JFrame {
         });
     }
 
-    private void loadDrafts() {
-        try {
-            this.drafts = JyUtils.getAllJyDrafts();
-        } catch (JySrtToolsException e) {
-            JOptionPane.showMessageDialog(this,
-                    new ErrorMessagePanel(e.getMessage()), "程式錯誤", JOptionPane.ERROR_MESSAGE);
-        }
-    }
-
     private void init() {
         setLayout(new BorderLayout());
 
@@ -57,6 +61,7 @@ public class JySrtTools extends JFrame {
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
 
+        // 限制主視窗無法縮的比 minimum size 還要小
         addComponentListener(new ComponentAdapter() {
             public void componentResized(ComponentEvent e) {
                 Dimension d = getSize();
@@ -76,183 +81,21 @@ public class JySrtTools extends JFrame {
             e.printStackTrace();
         }
 
-        createMenuBar();
-        createListPanel();
-        createTextsPanel();
-        createActionPanel();
+        setJMenuBar(new JyMenuBar(this));
+
+        listPanel = new DraftListPanel(this);
+        add(listPanel, BorderLayout.WEST);
+
+        textsPanel = new DraftTextsPanel();
+        add(textsPanel, BorderLayout.CENTER);
+
+        actionPanel = new DraftActionPanel(this);
+        add(actionPanel, BorderLayout.EAST);
 
         progressDialog = new TranslateProgressDialog(this, true);
     }
 
-    private void createMenuBar() {
-        var menuBar = new JMenuBar();
-
-        var fileMenu = new JMenu("檔案");
-        fileMenu.setMnemonic(KeyEvent.VK_F);
-
-        var reloadMenuItem = new JMenuItem("重新載入");
-        reloadMenuItem.setMnemonic(KeyEvent.VK_R);
-        reloadMenuItem.setToolTipText("重新載入剪映草稿");
-        fileMenu.add(reloadMenuItem);
-        reloadMenuItem.addActionListener(e -> {
-            loadDrafts();
-            listPanel.reloadList(drafts);
-            try {
-                textsPanel.setTexts(null);
-            } catch (JySrtToolsException jye) {
-                actionPanel.enableButtons(false);
-                JOptionPane.showMessageDialog(JySrtTools.this,
-                        new ErrorMessagePanel(jye.getMessage()), "重新載入草稿錯誤", JOptionPane.ERROR_MESSAGE);
-            }
-            actionPanel.enableButtons(false);
-        });
-
-        var aboutMenuItem = new JMenuItem("關於");
-        aboutMenuItem.setMnemonic(KeyEvent.VK_A);
-        aboutMenuItem.setToolTipText("關於本程式");
-        aboutMenuItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                Object[] options = {"知道了"};
-                ImageIcon icon = null;
-                try {
-                    Image image = ImageIO.read(Objects.requireNonNull(this.getClass().getClassLoader().getResourceAsStream("icon.png")));
-                    icon = new ImageIcon(new ImageIcon(image).getImage().getScaledInstance(96, 96, Image.SCALE_DEFAULT));
-
-                } catch (IOException ioe) {
-                    ioe.printStackTrace();
-                }
-
-                JOptionPane.showOptionDialog(JySrtTools.this,
-                        new AboutPanel(),
-                        "關於本程式",
-                        JOptionPane.OK_OPTION,
-                        JOptionPane.INFORMATION_MESSAGE,
-                        icon,
-                        options,
-                        options[0]);
-            }
-        });
-        fileMenu.add(aboutMenuItem);
-
-        var exiMenuItem = new JMenuItem("結束");
-        exiMenuItem.setMnemonic(KeyEvent.VK_E);
-        exiMenuItem.setToolTipText("結束程式");
-        exiMenuItem.addActionListener((event) -> System.exit(0));
-        fileMenu.add(exiMenuItem);
-
-        menuBar.add(fileMenu);
-
-        setJMenuBar(menuBar);
-    }
-
-    private void createListPanel() {
-        listPanel = new DraftListPanel();
-        listPanel.init(drafts);
-        listPanel.setListEventListener(event -> {
-            if (!event.getValueIsAdjusting()) {
-                JList<JyDraft> list = (JList<JyDraft>) event.getSource();
-                currentSelectedDraft = list.getSelectedValue();
-                try {
-                    textsPanel.setTexts(currentSelectedDraft);
-                    actionPanel.enableButtons(true);
-                } catch (JySrtToolsException e) {
-                    actionPanel.enableButtons(false);
-                    JOptionPane.showMessageDialog(JySrtTools.this,
-                            new ErrorMessagePanel(e.getMessage()), "草稿資料讀取錯誤", JOptionPane.ERROR_MESSAGE);
-                }
-            }
-        });
-
-        add(listPanel, BorderLayout.WEST);
-    }
-
-    private void createTextsPanel() {
-        textsPanel = new DraftTextsPanel();
-        textsPanel.init();
-        add(textsPanel, BorderLayout.CENTER);
-    }
-
-    private void createActionPanel() {
-        actionPanel = new DraftActionPanel();
-        actionPanel.init();
-        add(actionPanel, BorderLayout.EAST);
-
-        actionPanel.setButtonActionListener("translate", e -> {
-            progressDialog.doTranslate(currentSelectedDraft);
-            try {
-                textsPanel.setTexts(currentSelectedDraft);
-            } catch (JySrtToolsException jye) {
-                actionPanel.enableButtons(false);
-                JOptionPane.showMessageDialog(JySrtTools.this,
-                        new ErrorMessagePanel(jye.getMessage()), "草稿文字更新錯誤", JOptionPane.ERROR_MESSAGE);
-            }
-        });
-
-        actionPanel.setButtonActionListener("remove", new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                Object[] options = {"清除", "算了"};
-                ImageIcon icon = null;
-                try {
-                    Image image = ImageIO.read(Objects.requireNonNull(this.getClass().getClassLoader().getResourceAsStream("remove.png")));
-                    icon = new ImageIcon(image);
-                } catch (IOException ioe) {
-                    ioe.printStackTrace();
-                }
-
-                int result = JOptionPane.showOptionDialog(JySrtTools.this, "<html><span style='font-size:16px'>確定清除草稿字幕？</span></html>", "草稿字幕清除",
-                        JOptionPane.YES_NO_OPTION,
-                        JOptionPane.QUESTION_MESSAGE,
-                        icon,
-                        options,
-                        options[0]);
-                if (result == JOptionPane.YES_OPTION) {
-                    try {
-                        currentSelectedDraft.deleteDraftSubtitles();
-                    } catch (JySrtToolsException jye) {
-                        JOptionPane.showMessageDialog(JySrtTools.this,
-                                new ErrorMessagePanel(jye.getMessage()), "草稿字幕清除失敗", JOptionPane.ERROR_MESSAGE);
-                    }
-                    try {
-                        JyUtils.saveDraft(currentSelectedDraft);
-                    } catch (JySrtToolsException jye) {
-                        JOptionPane.showMessageDialog(JySrtTools.this,
-                                new ErrorMessagePanel(jye.getMessage()), "草稿更新存檔失敗", JOptionPane.ERROR_MESSAGE);
-                    }
-                    try {
-                        textsPanel.setTexts(currentSelectedDraft);
-                    } catch (JySrtToolsException jye) {
-                        JOptionPane.showMessageDialog(JySrtTools.this,
-                                new ErrorMessagePanel(jye.getMessage()), "草稿重新戴入失敗", JOptionPane.ERROR_MESSAGE);
-                    }
-
-                }
-            }
-        });
-
-        actionPanel.setButtonActionListener("export", e -> {
-            JFileChooser fileChooser = new JFileChooser();
-            fileChooser.setDialogTitle("請選擇要匯出的檔案目錄和名稱");
-            fileChooser.setSelectedFile(new File(currentSelectedDraft.getName() + ".srt"));
-            fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
-            fileChooser.setAcceptAllFileFilterUsed(false);
-            FileNameExtensionFilter filter = new FileNameExtensionFilter("SRT 字幕檔", "srt");
-            fileChooser.addChoosableFileFilter(filter);
-            int result = fileChooser.showSaveDialog(JySrtTools.this);
-            if (result == JFileChooser.APPROVE_OPTION) {
-                File selectedFile = fileChooser.getSelectedFile();
-                String path = selectedFile.getAbsolutePath();
-                if (!path.endsWith(".srt")) {
-                    path += ".srt";
-                }
-                try {
-                    JyUtils.exportToSrt(currentSelectedDraft, path);
-                } catch (JySrtToolsException jye) {
-                    JOptionPane.showMessageDialog(JySrtTools.this,
-                            new ErrorMessagePanel(jye.getMessage()), "字幕匯出失敗", JOptionPane.ERROR_MESSAGE);
-                }
-            }
-        });
+    public void loadDrafts() throws JySrtToolsException {
+        drafts = JyUtils.getAllJyDrafts();
     }
 }

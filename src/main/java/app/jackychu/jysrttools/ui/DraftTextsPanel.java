@@ -10,7 +10,7 @@ public class DraftTextsPanel extends JPanel {
     private JLabel label;
     private JTextArea textArea;
 
-    public void init() {
+    public DraftTextsPanel() {
         setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
         label = new JLabel("<html><span style='font-size:20px'>步驟二: 檢視草稿文字內容</span></html>", JLabel.LEFT);
