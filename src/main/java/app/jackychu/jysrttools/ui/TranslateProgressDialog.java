@@ -73,7 +73,7 @@ public class TranslateProgressDialog extends JDialog {
 
                 } catch (IOException | InterruptedException | JySrtToolsException e) {
                     JOptionPane.showMessageDialog(null,
-                            new ErrorMessagePanel(e.getMessage()), "翻譯失敗", JOptionPane.ERROR_MESSAGE);
+                            new ErrorMessagePanel(e), "翻譯失敗", JOptionPane.ERROR_MESSAGE);
                 }
 
                 btnOk.setEnabled(true);
