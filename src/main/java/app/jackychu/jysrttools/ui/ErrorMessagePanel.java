@@ -1,20 +1,24 @@
 package app.jackychu.jysrttools.ui;
 
 
-import org.apache.commons.text.WordUtils;
-
 import javax.swing.*;
 import java.awt.*;
 
 public class ErrorMessagePanel extends JPanel {
 
-    public ErrorMessagePanel(String message) {
+    public ErrorMessagePanel(Throwable th) {
         super();
+        String message = th.getMessage();
         setLayout(new BorderLayout());
         String title = message.split("(?<=!)")[0];
         message = message.replaceFirst(title, "").trim();
 
-        JTextArea textArea = new JTextArea(WordUtils.wrap(message, 50));
+        message += System.lineSeparator() + System.lineSeparator() + trimStackTrace(th.getStackTrace());
+        JTextArea textArea = new JTextArea(message);
+        textArea.setLineWrap(true);
+        textArea.setEditable(false);
+        JScrollPane jsp = new JScrollPane(textArea);
+        jsp.setPreferredSize(new Dimension(600, 200));
 
         JButton btnCopy = new JButton("複製錯誤訊息到剪貼簿");
         btnCopy.addActionListener(e -> {
@@ -23,7 +27,18 @@ public class ErrorMessagePanel extends JPanel {
         });
 
         add(new JLabel("<html><span color='red' style='font-size:16px'>" + title + "</span></html>"), BorderLayout.NORTH);
-        add(new JScrollPane(textArea), BorderLayout.CENTER);
+        add(jsp, BorderLayout.CENTER);
         add(btnCopy, BorderLayout.SOUTH);
+    }
+
+    private String trimStackTrace(StackTraceElement[] stackTrace) {
+        StringBuilder sb = new StringBuilder();
+
+        for (StackTraceElement element : stackTrace) {
+            if (element.getClassName().startsWith("app.jackychu"))
+                sb.append(element.toString()).append(System.lineSeparator());
+        }
+
+        return sb.toString();
     }
 }
