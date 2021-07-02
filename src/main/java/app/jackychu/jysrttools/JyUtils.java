@@ -7,16 +7,10 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Some utils for JY video
@@ -36,6 +30,59 @@ public class JyUtils {
             return home + "\\AppData\\Local\\JianyingPro\\User Data\\Projects\\com.lveditor.draft";
         else
             return home + "/Library/Containers/com.lemon.lvpro/Data/Movies/JianyingPro/User Data/Projects/com.lveditor.draft";
+    }
+
+    /**
+     * Get JianyingPro fonts path
+     * @return JianyingPro fonts path
+     */
+    public static String getJyFontsPath() {
+        String os = System.getProperty("os.name");
+        String home = System.getProperty("user.home");
+        if (os.toLowerCase(Locale.ROOT).contains("windows")) {
+            return "";
+        } else {
+            return "/Applications/VideoFusion-macOS.app/Contents/Resources/Font";
+        }
+    }
+
+    /**
+     * Find JianyingPro app location.
+     * But it is too slow. The find command taks 30 seconds.
+     * @return JianyingPro app path
+     * @throws JySrtToolsException Cannot find JianyingPro app
+     */
+    public static String findJyAppPath() throws JySrtToolsException {
+        String appName = "VideoFusion-macOS.app";
+        String findCmd = "find / -name %s";
+        String appPath = null;
+
+        String os = System.getProperty("os.name");
+        if (os.toLowerCase(Locale.ROOT).contains("windows")) {
+            appName = "";
+            findCmd = "";
+        }
+
+        try {
+            System.out.println(String.format(findCmd, appName));
+            Process process = new ProcessBuilder("find", "/", "-name", appName).start();
+            BufferedReader reader = new BufferedReader(
+                    new InputStreamReader(process.getInputStream()));
+
+            String line;
+            while ((line = reader.readLine()) != null) {
+                appPath = line;
+            }
+            reader.close();
+
+            if (appPath == null) {
+                throw new JySrtToolsException("無法找到剪映主程式!");
+            }
+
+            return appPath;
+        } catch (IOException e) {
+            throw new JySrtToolsException("無法找到剪映主程式! " + System.lineSeparator() + e.getMessage(), e);
+        }
     }
 
     /**
@@ -162,75 +209,44 @@ public class JyUtils {
         }
     }
 
-    /*
-     * Find files
-     *
-     * @param filename        The file's name which you want to find
-     * @param searchDirectory Search directory
-     * @return List of matched files
+    /**
+     * Get all JianyingPro fonts
+     * @return JianyingPro font list
+     * @throws JySrtToolsException Load font error
      */
-//    public static javaxt.io.File[] findFile(String filename, String searchDirectory) {
-//        String[] filter = new String[]{filename};
-//        Directory directory = new Directory(searchDirectory);
-//        List files = directory.getChildren(true, filter, false);
-//        Object obj;
-//        while (true) {
-//            synchronized (files) {
-//                while (files.isEmpty()) {
-//                    try {
-//                        files.wait();
-//                    } catch (InterruptedException e) {
-//                        break;
-//                    }
-//                }
-//                obj = files.remove(0);
-//                files.notifyAll();
-//            }
-//
-//            if (obj == null) {
-//                break;
-//            } else {
-//                if (obj instanceof javaxt.io.File) {
-//                    System.out.println(obj);
-//                    javaxt.io.File file = (javaxt.io.File) obj;
-//                } else if (obj instanceof javaxt.io.Directory) {
-//                    javaxt.io.Directory dir = (javaxt.io.Directory) obj;
-//                }
-//            }
-//        }
-//        return null;
-//        //        javaxt.io.File[] files = directory.getFiles(filter, true);
-////        return files;
-//    }
+    public static List<JyFont> getAllJyFonts() throws JySrtToolsException {
+        File[] files = new File(getJyFontsPath()).listFiles(new FilenameFilter() {
+            @Override
+            public boolean accept(File f, String name) {
+                return name.endsWith(".ttf");
+            }
+        });
 
-    /*
-     * Get JianyingPro draft config file real path
-     *
-     * @return config file path
-     * @throws JySrtToolsException Finding draft config file error!
-     */
-//    public static String getDraftConfigFilePath() throws JySrtToolsException {
-//        String filePath = null;
-////        String os = System.getProperty("os.name");
-////        String dir = os.toLowerCase(Locale.ROOT).contains("windows") ? "c:\\" : "/";
-//
-////        for (javaxt.io.Directory drive : javaxt.io.Directory.getRootDirectories()){
-////            javaxt.io.File[] files = findFile(ROOT_DRAFT_META_INFO_FILENAME, drive.getPath());
-//        javaxt.io.File[] files = findFile(ROOT_DRAFT_META_INFO_FILENAME, System.getProperty("user.home"));
-//        // Get a real one (not redundant one)
-//        // For Mac, the real one will under .../Library/....
-//        for (javaxt.io.File file : files) {
-//            System.out.println(file.toString());
-//            if (file.toString().toLowerCase(Locale.ROOT).contains("library")) {
-//                filePath = file.toString();
-//            }
-//        }
-////        }
-//
-//
-//        if (filePath == null) {
-//            throw new JySrtToolsException("Cannot find draft config file.");
-//        }
-//        return filePath;
-//    }
+        // The bak file name is original_fontname.replaced_fontname.bak
+        String[] bak = new File(getJyFontsPath()).list(new FilenameFilter() {
+            @Override
+            public boolean accept(File f, String name) {
+                return name.endsWith(".bak");
+            }
+        });
+        Map<String, String> bakFiles = new HashMap<>();
+        for(String b : bak) {
+            String fontName = b.split("\\.")[0];
+            String replacedName = b.split("\\.")[1];
+            bakFiles.put(fontName, replacedName);
+        }
+        Set<String> bakList = bakFiles.keySet();
+
+        List<JyFont> fonts = new ArrayList<>();
+        for(File f : files) {
+            JyFont jyf = new JyFont(f);
+            if (bakList.contains(jyf.getName())) {
+                jyf.setReplaced(true);
+                jyf.setReplacedName(bakFiles.get(jyf.getName()));
+            }
+            fonts.add(jyf);
+        }
+
+        return fonts;
+    }
 }
