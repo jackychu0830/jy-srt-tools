@@ -16,11 +16,13 @@ import java.util.Objects;
 
 public class DraftActionPanel extends JPanel {
     private JySrtTools jySrtTools;
+    private JyTextPanel parent;
     private JLabel label;
     private final Map<String, JButton> buttons = new HashMap<>();
 
-    public DraftActionPanel(JySrtTools jySrtTools) {
+    public DraftActionPanel(JySrtTools jySrtTools, JyTextPanel parent) {
         this.jySrtTools = jySrtTools;
+        this.parent = parent;
         setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 20));
         setLayout(new BorderLayout());
 
@@ -54,9 +56,9 @@ public class DraftActionPanel extends JPanel {
                 buttons.get(button).addActionListener(e -> {
                     jySrtTools.getProgressDialog().doTranslate(jySrtTools.getCurrentSelectedDraft());
                     try {
-                        jySrtTools.getTextsPanel().setTexts(jySrtTools.getCurrentSelectedDraft());
+                        parent.getTextsPanel().setTexts(jySrtTools.getCurrentSelectedDraft());
                     } catch (JySrtToolsException jye) {
-                        jySrtTools.getActionPanel().enableButtons(false);
+                        parent.getActionPanel().enableButtons(false);
                         JOptionPane.showMessageDialog(jySrtTools,
                                 new ErrorMessagePanel(jye), "草稿文字更新錯誤", JOptionPane.ERROR_MESSAGE);
                     }
@@ -119,7 +121,7 @@ public class DraftActionPanel extends JPanel {
                                     new ErrorMessagePanel(jye), "草稿更新存檔失敗", JOptionPane.ERROR_MESSAGE);
                         }
                         try {
-                            jySrtTools.getTextsPanel().setTexts(jySrtTools.getCurrentSelectedDraft());
+                            parent.getTextsPanel().setTexts(jySrtTools.getCurrentSelectedDraft());
                         } catch (JySrtToolsException jye) {
                             JOptionPane.showMessageDialog(jySrtTools,
                                     new ErrorMessagePanel(jye), "草稿重新戴入失敗", JOptionPane.ERROR_MESSAGE);
