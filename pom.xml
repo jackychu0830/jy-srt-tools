@@ -4,7 +4,7 @@
     <groupId>app.jackychu</groupId>
     <artifactId>jy-srt-tools</artifactId>
     <packaging>jar</packaging>
-    <version>1.0.136</version>
+    <version>1.1.136</version>
 
     <name>jy-srt-tools</name>
     <description>The SRT tools for JianyingPro video editor</description>
@@ -80,13 +80,6 @@
         <maven.compiler.target>1.8</maven.compiler.target>
     </properties>
 
-    <!--    <repositories>-->
-    <!--        <repository>-->
-    <!--            <id>javaxt.com</id>-->
-    <!--            <url>http://www.javaxt.com/maven</url>-->
-    <!--        </repository>-->
-    <!--    </repositories>-->
-
     <dependencies>
         <dependency>
             <groupId>junit</groupId>
@@ -120,11 +113,6 @@
             <artifactId>commons-text</artifactId>
             <version>1.9</version>
         </dependency>
-        <!--        <dependency>-->
-        <!--            <groupId>javaxt</groupId>-->
-        <!--            <artifactId>javaxt-core</artifactId>-->
-        <!--            <version>1.10.6</version>-->
-        <!--        </dependency>-->
     </dependencies>
 
     <profiles>
@@ -135,6 +123,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-assembly-plugin</artifactId>
+                        <version>3.3.0</version>
                         <executions>
                             <execution>
                                 <phase>package</phase>

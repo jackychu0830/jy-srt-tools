@@ -40,7 +40,7 @@ public class JyUtils {
         String os = System.getProperty("os.name");
         String home = System.getProperty("user.home");
         if (os.toLowerCase(Locale.ROOT).contains("windows")) {
-            return "";
+            return home+ "\\AppData\\Local\\JianyingPro\\User Data\\Resources\\Font";
         } else {
             return "/Applications/VideoFusion-macOS.app/Contents/Resources/Font";
         }
