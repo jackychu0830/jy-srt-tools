@@ -16,8 +16,6 @@ public class DraftListCellRender extends DefaultListCellRenderer {
         JyDraft draft = (JyDraft) value;
         setText("<html><span>" + WordUtils.wrap(draft.getName(), 13, "<br/>", true));
 
-        System.out.println();
-
         String icon = draft.getCoverFilename();
         if (icon == null || icon.length() < 1) {
             try {

@@ -12,15 +12,17 @@ import java.util.Objects;
 
 public class JyMenuBar extends JMenuBar {
     private JySrtTools jySrtTools;
+    private JyTextPanel jyTextPanel;
     private JMenu fileMenu;
     private JMenuItem reloadMenuItem;
     private JMenuItem aboutMenuItem;
     private JMenuItem exiMenuItem;
 
-    public JyMenuBar(JySrtTools jySrtTools) {
+    public JyMenuBar(JySrtTools jySrtTools, JyTextPanel jyTextPanel) {
         super();
 
         this.jySrtTools = jySrtTools;
+        this.jyTextPanel = jyTextPanel;
         fileMenu = new JMenu("檔案");
         fileMenu.setMnemonic(KeyEvent.VK_F);
 
@@ -49,14 +51,14 @@ public class JyMenuBar extends JMenuBar {
         reloadMenuItem.addActionListener(e -> {
             try {
                 jySrtTools.loadDrafts();
-                jySrtTools.getListPanel().reloadList(jySrtTools.getDrafts());
-                jySrtTools.getTextsPanel().setTexts(null);
+                jyTextPanel.getListPanel().reloadList(jySrtTools.getDrafts());
+                jyTextPanel.getTextsPanel().setTexts(null);
             } catch (JySrtToolsException jye) {
-                jySrtTools.getActionPanel().enableButtons(false);
+                jyTextPanel.getActionPanel().enableButtons(false);
                 JOptionPane.showMessageDialog(jySrtTools,
                         new ErrorMessagePanel(jye), "重新載入草稿錯誤", JOptionPane.ERROR_MESSAGE);
             }
-            jySrtTools.getActionPanel().enableButtons(false);
+            jyTextPanel.getActionPanel().enableButtons(false);
         });
     }
 

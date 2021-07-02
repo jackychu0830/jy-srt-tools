@@ -18,24 +18,25 @@ public class JySrtTools extends JFrame {
     @Getter
     private Map<String, JyDraft> drafts;
     @Getter
-    private DraftListPanel listPanel;
-    @Getter
-    private DraftTextsPanel textsPanel;
-    @Getter
-    private DraftActionPanel actionPanel;
-    @Getter
     @Setter
-    private JyDraft currentSelectedDraft;
+    private JyDraft currentSelectedDraft = null;
     @Getter
     private TranslateProgressDialog progressDialog;
 
+    @Getter
+    private JyTextPanel jyTextPanel;
+    @Getter
+    private JyFontPanel jyFontPanel;
+
     public JySrtTools() {
         try {
+
             loadDrafts();
             init();
         } catch (Throwable e) {
             JOptionPane.showMessageDialog(this,
                     new ErrorMessagePanel(e), "程式錯誤", JOptionPane.ERROR_MESSAGE);
+            System.exit(1);
         }
     }
 
@@ -81,16 +82,14 @@ public class JySrtTools extends JFrame {
             e.printStackTrace();
         }
 
-        setJMenuBar(new JyMenuBar(this));
-
-        listPanel = new DraftListPanel(this);
-        add(listPanel, BorderLayout.WEST);
-
-        textsPanel = new DraftTextsPanel();
-        add(textsPanel, BorderLayout.CENTER);
-
-        actionPanel = new DraftActionPanel(this);
-        add(actionPanel, BorderLayout.EAST);
+        jyTextPanel = new JyTextPanel(this);
+        jyFontPanel = new JyFontPanel(this);
+//        JTabbedPane tabPanel = new JTabbedPane();
+//        tabPanel.add("草稿文字處理", jyTextPanel);
+//        tabPanel.add("剪映字型管理", jyFontPanel);
+//        add(tabPanel);
+        add(jyTextPanel);
+        setJMenuBar(new JyMenuBar(this, jyTextPanel));
 
         progressDialog = new TranslateProgressDialog(this, true);
     }
