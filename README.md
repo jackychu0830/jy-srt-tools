@@ -6,8 +6,8 @@
 
 ## 安裝說明
 1. 安裝 Java 11 執行環境 (下載: https://www.microsoft.com/openjdk)
-2. 下載剪映字幕工具箱式 [1.0.136 版](https://github.com/jackychu0830/jy-srt-tools/releases/download/1.0.136-Win/JySrtTools-1.0.136-Win.jar)
-3. 滑鼠雙擊 JySrtTools-1.0.136-Win.jar 執行程式
+2. 下載剪映字幕工具箱式 [1.1.136 版](https://github.com/jackychu0830/jy-srt-tools/releases/download/1.1.136-Win/jy-srt-tools-1.1.136-Win.jar)
+3. 滑鼠雙擊 jy-srt-tools-1.1.136-Win.jar 執行程式
 
 ## 執行畫面
 ![畫面](https://github.com/jackychu0830/jy-srt-tools/raw/win/screenshot-win.png)
