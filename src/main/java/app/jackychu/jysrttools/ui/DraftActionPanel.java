@@ -15,9 +15,8 @@ import java.util.Map;
 import java.util.Objects;
 
 public class DraftActionPanel extends JPanel {
-    private JySrtTools jySrtTools;
-    private JyTextPanel parent;
-    private JLabel label;
+    private final JySrtTools jySrtTools;
+    private final JyTextPanel parent;
     private final Map<String, JButton> buttons = new HashMap<>();
 
     public DraftActionPanel(JySrtTools jySrtTools, JyTextPanel parent) {
@@ -26,7 +25,7 @@ public class DraftActionPanel extends JPanel {
         setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 20));
         setLayout(new BorderLayout());
 
-        label = new JLabel("<html><span style='font-size:20px'>步驟三: 執行功能</span></html>", JLabel.LEFT);
+        JLabel label = new JLabel("<html><span style='font-size:20px'>步驟三: 執行功能</span></html>", JLabel.LEFT);
 
         JPanel panel = new JPanel();
         JButton btnTranslate = new JButton("<html><span style='font-size:16px'>简体轉繁體</span></html>");

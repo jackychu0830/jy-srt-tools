@@ -9,17 +9,23 @@ import java.awt.*;
 import java.util.Map;
 
 public class DraftListPanel extends JPanel {
-    private JySrtTools jySrtTools;
-    private JyTextPanel parent;
-    private JLabel label;
-    private JList<JyDraft> list;
+    private final JySrtTools jySrtTools;
+    private final JyTextPanel parent;
+    private final JList<JyDraft> list;
 
     public DraftListPanel(JySrtTools jySrtTools, JyTextPanel parent) {
         this.jySrtTools = jySrtTools;
         this.parent = parent;
         setBorder(BorderFactory.createEmptyBorder(5, 20, 5, 5));
 
-        label = new JLabel("<html><span style='font-size:20px'>步驟一: 選擇影片草稿</span></html>", JLabel.LEFT);
+        JPanel titlePanel = new JPanel();
+        titlePanel.setLayout(new BorderLayout());
+
+        JLabel label = new JLabel("<html><span style='font-size:20px'>步驟一: 選擇影片草稿</span></html>", JLabel.LEFT);
+        titlePanel.add(label, BorderLayout.WEST);
+        JButton btnReload = new JButton("<html><span style='font-size:16px'>重新載入</span></html>");
+        setButtonActionListener(btnReload);
+        titlePanel.add(btnReload, BorderLayout.EAST);
 
         list = new JList<>(getListModel(jySrtTools.getDrafts()));
         list.setCellRenderer(new DraftListCellRender());
@@ -29,11 +35,26 @@ public class DraftListPanel extends JPanel {
         jsp.setHorizontalScrollBar(null);
 
         setLayout(new BorderLayout());
-        add(label, BorderLayout.NORTH);
+        add(titlePanel, BorderLayout.NORTH);
         add(jsp, BorderLayout.CENTER);
     }
 
-    public void setListEventListener() {
+    private void setButtonActionListener(JButton btn) {
+        btn.addActionListener(event -> {
+            try {
+                jySrtTools.loadDrafts();
+                jySrtTools.getJyTextPanel().getListPanel().reloadList(jySrtTools.getDrafts());
+                jySrtTools.getJyTextPanel().getTextsPanel().setTexts(null);
+            } catch (JySrtToolsException jye) {
+                jySrtTools.getJyTextPanel().getActionPanel().enableButtons(false);
+                JOptionPane.showMessageDialog(jySrtTools,
+                        new ErrorMessagePanel(jye), "重新載入草稿錯誤", JOptionPane.ERROR_MESSAGE);
+            }
+            jySrtTools.getJyTextPanel().getActionPanel().enableButtons(false);
+        });
+    }
+
+    private void setListEventListener() {
         list.addListSelectionListener(event -> {
             if (!event.getValueIsAdjusting()) {
                 JList<JyDraft> list = (JList<JyDraft>) event.getSource();

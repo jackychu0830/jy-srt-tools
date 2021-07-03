@@ -11,10 +11,10 @@ public class JyFontListCellRender extends DefaultListCellRenderer {
 
         JyFont font = (JyFont) value;
         setText(font.getName());
-        setFont(font.getTtfFont());
+        setFont(font.getFont());
 
         if (font.isReplaced()) {
-            setText(font.getName()+ " (替換成: " + font.getReplacedName() + ")");
+            setText(font.getName() + " (替換成: " + font.getReplacedName() + ")");
         }
 
         if (isSelected) {

@@ -5,12 +5,22 @@ import app.jackychu.jysrttools.JySrtTools;
 import app.jackychu.jysrttools.JyUtils;
 import app.jackychu.jysrttools.exception.JySrtToolsException;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.DefaultHighlighter;
+import javax.swing.text.Highlighter;
 import java.awt.*;
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.util.Objects;
 
 public class JyFontPanel extends JPanel {
 
@@ -18,10 +28,12 @@ public class JyFontPanel extends JPanel {
     private final JList<JyFont> fontList;
     private final JTextArea exampleTextArea;
     private final JTextArea originTextArea;
-    private JyFont selectedFont;
     private final String originText;
     private final JButton btnReplace;
     private final JButton btnReset;
+    private final JScrollPane jspExample;
+    private final JScrollPane jspOrigin;
+    private JyFont selectedFont;
 
     public JyFontPanel(JySrtTools jySrtTools) {
         this.jySrtTools = jySrtTools;
@@ -40,7 +52,8 @@ public class JyFontPanel extends JPanel {
         fontListPanel.add(jsp, BorderLayout.CENTER);
         add(fontListPanel, BorderLayout.WEST);
 
-        originText = "歡迎按讚、訂閱、留言加分享~" + System.lineSeparator() +
+        originText = "(繁體) 歡迎按讚、訂閱、留言加分享~" + System.lineSeparator() +
+                "(简体) 欢迎按赞、订阅、留言加分享~" + System.lineSeparator() +
                 "ABCDEFGHIJKLMNOPQRSTUVWXYZ" + System.lineSeparator() +
                 "1234567890" + System.lineSeparator() +
                 ",.;/':~!@#$%^&*()[]{}<>?~";
@@ -51,7 +64,7 @@ public class JyFontPanel extends JPanel {
         textPanel.add(new JLabel("<html><span style='font-size:20px'>文字範例</span></html>", JLabel.LEFT), BorderLayout.NORTH);
 
         JPanel textExamplePanel = new JPanel();
-        textExamplePanel.setLayout(new GridLayout(2, 1));
+        textExamplePanel.setLayout(new GridLayout(1, 2));
 
         JPanel originTextPanel = new JPanel();
         originTextPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
@@ -62,7 +75,10 @@ public class JyFontPanel extends JPanel {
         originTextArea.setFont(originTextArea.getFont().deriveFont(20f));
         originTextArea.setMargin(new Insets(10, 10, 10, 10));
         textAreaTextChange();
-        originTextPanel.add(new JScrollPane(originTextArea), BorderLayout.CENTER);
+        textAreaCaretChange();
+        jspOrigin = new JScrollPane(originTextArea);
+        // setScrollPaneAdjustmentListener(jspOrigin);
+        originTextPanel.add(jspOrigin, BorderLayout.CENTER);
         textExamplePanel.add(originTextPanel);
 
         JPanel exampleTextPanel = new JPanel();
@@ -73,7 +89,9 @@ public class JyFontPanel extends JPanel {
         exampleTextArea.setMargin(new Insets(10, 10, 10, 10));
         exampleTextArea.setText(originText);
         exampleTextArea.setEditable(false);
-        exampleTextPanel.add(new JScrollPane(exampleTextArea), BorderLayout.CENTER);
+        jspExample = new JScrollPane(exampleTextArea);
+        // setScrollPaneAdjustmentListener(jspExample);
+        exampleTextPanel.add(jspExample, BorderLayout.CENTER);
         textExamplePanel.add(exampleTextPanel);
 
         textPanel.add(textExamplePanel, BorderLayout.CENTER);
@@ -114,19 +132,53 @@ public class JyFontPanel extends JPanel {
         return model;
     }
 
+    private void setScrollPaneAdjustmentListener(JScrollPane jsp) {
+        jsp.getVerticalScrollBar().addAdjustmentListener(event -> {
+            if (event.getValueIsAdjusting()) {
+                return;
+            }
+            if (jsp.equals(jspExample)) {
+                jspOrigin.getVerticalScrollBar().setValue(event.getValue());
+            } else {
+                jspExample.getVerticalScrollBar().setValue(event.getValue());
+            }
+        });
+    }
+
     private void setListEventListener() {
         fontList.addListSelectionListener(event -> {
             if (!event.getValueIsAdjusting()) {
                 JList<JyFont> list = (JList<JyFont>) event.getSource();
                 selectedFont = list.getSelectedValue();
-                exampleTextArea.setFont(selectedFont.getTtfFont());
-                btnReplace.setEnabled(true);
+                if (selectedFont != null) {
+                    exampleTextArea.setFont(selectedFont.getFont());
+                    btnReplace.setEnabled(true);
 
-                if (selectedFont.isReplaced()) {
-                    btnReset.setEnabled(true);
+                    btnReset.setEnabled(selectedFont.isReplaced());
                 } else {
+                    btnReplace.setEnabled(false);
                     btnReset.setEnabled(false);
                 }
+            }
+        });
+    }
+
+    private void textAreaCaretChange() {
+        Highlighter.HighlightPainter painter = new DefaultHighlighter.DefaultHighlightPainter(Color.CYAN);
+
+        originTextArea.addCaretListener(event -> {
+            originTextArea.getHighlighter().removeAllHighlights();
+            exampleTextArea.getHighlighter().removeAllHighlights();
+            try {
+                int caretPosition = originTextArea.getCaretPosition();
+                int lineNum = originTextArea.getLineOfOffset(caretPosition);
+                int lineStart = originTextArea.getLineStartOffset(lineNum);
+                int lineEnd = originTextArea.getLineEndOffset(lineNum);
+                originTextArea.getHighlighter().addHighlight(lineStart, lineEnd, painter);
+                exampleTextArea.getHighlighter().addHighlight(lineStart, lineEnd, painter);
+                exampleTextArea.setCaretPosition(caretPosition);
+            } catch (BadLocationException e) {
+                e.printStackTrace();
             }
         });
     }
@@ -156,22 +208,91 @@ public class JyFontPanel extends JPanel {
     private void setReplaceButtonActionListener() {
         btnReplace.addActionListener(e -> {
             JFileChooser fileChooser = new JFileChooser();
-            fileChooser.setDialogTitle("請選擇新字型 TTF 檔案");
+            fileChooser.setDialogTitle("請選擇新字型 TTF/OTF 檔案");
             fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
-            FileNameExtensionFilter filter = new FileNameExtensionFilter("TTF 字型檔", "ttf");
+            fileChooser.setAcceptAllFileFilterUsed(false);
+            FileNameExtensionFilter filter = new FileNameExtensionFilter("TTF/OTF 字型檔", "ttf", "otf");
             fileChooser.addChoosableFileFilter(filter);
             int result = fileChooser.showOpenDialog(jySrtTools);
             if (result == JFileChooser.APPROVE_OPTION) {
                 File selectedFile = fileChooser.getSelectedFile();
-                String path = selectedFile.getAbsolutePath();
-                System.out.println(path);
+                String newFilename = selectedFile.getName().split("\\.")[0];
+                Path target = Paths.get(selectedFont.getFile().getAbsolutePath());
+                Path source = Paths.get(selectedFile.getAbsolutePath());
+                Path bakTarget = Paths.get(target.getParent().toString(),
+                        selectedFont.getName() + "." + newFilename + ".bak");
+
+                Object[] options = {"確定", "取消"};
+                ImageIcon icon = null;
+                try {
+                    Image image = ImageIO.read(Objects.requireNonNull(this.getClass().getClassLoader().getResourceAsStream("replace.png")));
+                    icon = new ImageIcon(image);
+                } catch (IOException ioe) {
+                    ioe.printStackTrace();
+                }
+
+                result = JOptionPane.showOptionDialog(jySrtTools,
+                        "<html><span style='font-size:16px'>確定將 <font color='blue'>" + selectedFont.getName() +
+                                "</font> 替換成 <font color='green'>" + newFilename + "</font>？</span></html>", "字型替換",
+                        JOptionPane.YES_NO_OPTION,
+                        JOptionPane.QUESTION_MESSAGE,
+                        icon,
+                        options,
+                        options[0]);
+                if (result == JOptionPane.YES_OPTION) {
+                    try {
+                        if (selectedFont.isReplaced()) {
+                            resetFont();
+                        }
+                        Files.copy(target, bakTarget, StandardCopyOption.REPLACE_EXISTING);
+                        Files.copy(source, target, StandardCopyOption.REPLACE_EXISTING);
+                        reloadFontList();
+                    } catch (Exception ioe) {
+                        JOptionPane.showMessageDialog(jySrtTools,
+                                new ErrorMessagePanel(ioe), "字型替換失敗", JOptionPane.ERROR_MESSAGE);
+                    }
+                }
             }
         });
     }
 
     private void setResetButtonActionListener() {
-        btnReplace.addActionListener(e -> {
+        btnReset.addActionListener(e -> {
+            Object[] options = {"確定", "取消"};
+            ImageIcon icon = null;
+            try {
+                Image image = ImageIO.read(Objects.requireNonNull(this.getClass().getClassLoader().getResourceAsStream("reset.png")));
+                icon = new ImageIcon(image);
+            } catch (IOException ioe) {
+                ioe.printStackTrace();
+            }
+
+            int result = JOptionPane.showOptionDialog(jySrtTools,
+                    "<html><span style='font-size:16px'>確定還原回剪映 " + selectedFont.getName() + " 字型？</span></html>", "字型還原",
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.QUESTION_MESSAGE,
+                    icon,
+                    options,
+                    options[0]);
+            if (result == JOptionPane.YES_OPTION) {
+                resetFont();
+                reloadFontList();
+            }
         });
+    }
+
+    private void resetFont() {
+        Path target = Paths.get(selectedFont.getFile().getAbsolutePath());
+        Path source = Paths.get(target.getParent().toString(),
+                selectedFont.getName() + "." + selectedFont.getReplacedName() + ".bak");
+        try {
+            File old = new File(source.toString());
+            Files.copy(source, target, StandardCopyOption.REPLACE_EXISTING);
+            Files.deleteIfExists(source);
+        } catch (Exception ioe) {
+            JOptionPane.showMessageDialog(jySrtTools,
+                    new ErrorMessagePanel(ioe), "字型還原失敗", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     public void setText(String text) {
@@ -182,5 +303,20 @@ public class JyFontPanel extends JPanel {
         }
         originTextArea.setCaretPosition(0);
         exampleTextArea.setCaretPosition(0);
+    }
+
+    public void reloadFontList() {
+        String name = selectedFont.getName();
+        fontList.removeAll();
+        fontList.setModel(getListModel());
+        fontList.setSelectedIndex(0);
+
+        ListModel<JyFont> lm = fontList.getModel();
+        for (int i = 0; i < lm.getSize(); i++) {
+            if (lm.getElementAt(i).getName().equals(name)) {
+                fontList.setSelectedValue(lm.getElementAt(i), true);
+                break;
+            }
+        }
     }
 }

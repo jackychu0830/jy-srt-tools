@@ -9,9 +9,10 @@ import app.jackychu.jysrttools.exception.JySrtToolsException;
 import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.*;
-import java.util.stream.Collector;
+import java.util.Map;
 
 public class TranslateProgressDialog extends JDialog {
     private final JFrame parent;
