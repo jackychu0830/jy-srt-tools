@@ -34,13 +34,14 @@ public class JyUtils {
 
     /**
      * Get JianyingPro fonts path
+     *
      * @return JianyingPro fonts path
      */
     public static String getJyFontsPath() {
         String os = System.getProperty("os.name");
         String home = System.getProperty("user.home");
         if (os.toLowerCase(Locale.ROOT).contains("windows")) {
-            return "";
+            return home + "\\AppData\\Local\\JianyingPro\\User Data\\Resources\\Font";
         } else {
             return "/Applications/VideoFusion-macOS.app/Contents/Resources/Font";
         }
@@ -49,6 +50,7 @@ public class JyUtils {
     /**
      * Find JianyingPro app location.
      * But it is too slow. The find command taks 30 seconds.
+     *
      * @return JianyingPro app path
      * @throws JySrtToolsException Cannot find JianyingPro app
      */
@@ -211,26 +213,17 @@ public class JyUtils {
 
     /**
      * Get all JianyingPro fonts
+     *
      * @return JianyingPro font list
      * @throws JySrtToolsException Load font error
      */
     public static List<JyFont> getAllJyFonts() throws JySrtToolsException {
-        File[] files = new File(getJyFontsPath()).listFiles(new FilenameFilter() {
-            @Override
-            public boolean accept(File f, String name) {
-                return name.endsWith(".ttf");
-            }
-        });
+        File[] files = new File(getJyFontsPath()).listFiles((f, name) -> name.endsWith(".ttf") || name.endsWith(".otf"));
 
         // The bak file name is original_fontname.replaced_fontname.bak
-        String[] bak = new File(getJyFontsPath()).list(new FilenameFilter() {
-            @Override
-            public boolean accept(File f, String name) {
-                return name.endsWith(".bak");
-            }
-        });
+        String[] bak = new File(getJyFontsPath()).list((f, name) -> name.endsWith(".bak"));
         Map<String, String> bakFiles = new HashMap<>();
-        for(String b : bak) {
+        for (String b : Objects.requireNonNull(bak)) {
             String fontName = b.split("\\.")[0];
             String replacedName = b.split("\\.")[1];
             bakFiles.put(fontName, replacedName);
@@ -238,7 +231,7 @@ public class JyUtils {
         Set<String> bakList = bakFiles.keySet();
 
         List<JyFont> fonts = new ArrayList<>();
-        for(File f : files) {
+        for (File f : Objects.requireNonNull(files)) {
             JyFont jyf = new JyFont(f);
             if (bakList.contains(jyf.getName())) {
                 jyf.setReplaced(true);

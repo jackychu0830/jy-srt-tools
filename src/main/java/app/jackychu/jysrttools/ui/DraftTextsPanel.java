@@ -9,14 +9,13 @@ import java.awt.*;
 
 public class DraftTextsPanel extends JPanel {
     private final JySrtTools jySrtTools;
-    private JLabel label;
-    private JTextArea textArea;
+    private final JTextArea textArea;
 
     public DraftTextsPanel(JySrtTools jySrtTools) {
         this.jySrtTools = jySrtTools;
         setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
-        label = new JLabel("<html><span style='font-size:20px'>步驟二: 檢視草稿文字內容</span></html>", JLabel.LEFT);
+        JLabel label = new JLabel("<html><span style='font-size:20px'>步驟二: 檢視草稿文字內容</span></html>", JLabel.LEFT);
         textArea = new JTextArea();
         textArea.setEditable(false);
         textArea.setFont(textArea.getFont().deriveFont(20f));

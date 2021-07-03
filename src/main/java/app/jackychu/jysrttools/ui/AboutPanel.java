@@ -22,7 +22,7 @@ public class AboutPanel extends JPanel {
             e.printStackTrace();
         }
 
-        setLayout(new GridLayout(3,1));
+        setLayout(new GridLayout(3, 1));
         add(new JLabel("<html><span style='font-size:16px'>作業系統: " + System.getProperty("os.name") + "</span></html>"));
         add(new JLabel("<html><span style='font-size:16px'>工具箱版本: " + version + "</span></html>"));
         add(new JLabel("<html><span style='font-size:16px'>剪映版本: " + jy_version + "</span></html>"));

@@ -30,7 +30,6 @@ public class JySrtTools extends JFrame {
 
     public JySrtTools() {
         try {
-
             loadDrafts();
             init();
         } catch (Throwable e) {
@@ -84,12 +83,11 @@ public class JySrtTools extends JFrame {
 
         jyTextPanel = new JyTextPanel(this);
         jyFontPanel = new JyFontPanel(this);
-//        JTabbedPane tabPanel = new JTabbedPane();
-//        tabPanel.add("草稿文字處理", jyTextPanel);
-//        tabPanel.add("剪映字型管理", jyFontPanel);
-//        add(tabPanel);
-        add(jyTextPanel);
-        setJMenuBar(new JyMenuBar(this, jyTextPanel));
+        JTabbedPane tabPanel = new JTabbedPane();
+        tabPanel.add("草稿文字處理", jyTextPanel);
+        tabPanel.add("剪映字型管理", jyFontPanel);
+        add(tabPanel);
+        setJMenuBar(new JyMenuBar(this));
 
         progressDialog = new TranslateProgressDialog(this, true);
     }
