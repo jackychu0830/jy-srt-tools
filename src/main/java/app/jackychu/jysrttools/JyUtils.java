@@ -219,6 +219,7 @@ public class JyUtils {
      */
     public static List<JyFont> getAllJyFonts() throws JySrtToolsException {
         File[] files = new File(getJyFontsPath()).listFiles((f, name) -> name.endsWith(".ttf") || name.endsWith(".otf"));
+        Arrays.sort(Objects.requireNonNull(files), (a, b) -> -a.getName().compareTo(b.getName()));
 
         // The bak file name is original_fontname.replaced_fontname.bak
         String[] bak = new File(getJyFontsPath()).list((f, name) -> name.endsWith(".bak"));
