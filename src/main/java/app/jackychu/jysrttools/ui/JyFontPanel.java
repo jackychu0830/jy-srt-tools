@@ -167,6 +167,9 @@ public class JyFontPanel extends JPanel {
         Highlighter.HighlightPainter painter = new DefaultHighlighter.DefaultHighlightPainter(Color.CYAN);
 
         originTextArea.addCaretListener(event -> {
+            if (!originTextArea.getText().equals(exampleTextArea.getText())) {
+                exampleTextArea.setText(originTextArea.getText());
+            }
             originTextArea.getHighlighter().removeAllHighlights();
             exampleTextArea.getHighlighter().removeAllHighlights();
             try {
@@ -200,7 +203,7 @@ public class JyFontPanel extends JPanel {
             }
 
             private void setText() {
-                exampleTextArea.setText(originTextArea.getText());
+                //exampleTextArea.setText(originTextArea.getText());
             }
         });
     }
