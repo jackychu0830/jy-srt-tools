@@ -8,11 +8,11 @@ public class ErrorMessagePanel extends JPanel {
 
     public ErrorMessagePanel(Throwable th) {
         super();
-        String message = th.getMessage();
+        String message = th.getMessage() == null ? th.toString() : th.getMessage();
         setLayout(new BorderLayout());
         String title = message.split("(?<=!)")[0];
         message = message.replaceFirst(title, "").trim();
-
+        message += th.getClass();
         message += System.lineSeparator() + System.lineSeparator() + trimStackTrace(th.getStackTrace());
         JTextArea textArea = new JTextArea(message);
         textArea.setLineWrap(true);
@@ -36,7 +36,7 @@ public class ErrorMessagePanel extends JPanel {
 
         for (StackTraceElement element : stackTrace) {
             if (element.getClassName().startsWith("app.jackychu"))
-                sb.append(element.toString()).append(System.lineSeparator());
+                sb.append(element).append(System.lineSeparator());
         }
 
         return sb.toString();

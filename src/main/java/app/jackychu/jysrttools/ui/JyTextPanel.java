@@ -8,18 +8,16 @@ import java.awt.*;
 
 public class JyTextPanel extends JPanel {
 
-    private JySrtTools jySrtTools;
     @Getter
-    private DraftListPanel listPanel;
+    private final DraftListPanel listPanel;
     @Getter
-    private DraftTextsPanel textsPanel;
+    private final DraftTextsPanel textsPanel;
     @Getter
-    private DraftActionPanel actionPanel;
+    private final DraftActionPanel actionPanel;
 
     public JyTextPanel(JySrtTools jySrtTools) {
         setLayout(new BorderLayout());
 
-        this.jySrtTools = jySrtTools;
         listPanel = new DraftListPanel(jySrtTools, this);
         add(listPanel, BorderLayout.WEST);
 
