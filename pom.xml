@@ -4,7 +4,7 @@
     <groupId>app.jackychu</groupId>
     <artifactId>jy-srt-tools</artifactId>
     <packaging>jar</packaging>
-    <version>1.1.135</version>
+    <version>1.2.135</version>
 
     <name>jy-srt-tools-mac</name>
     <description>The SRT tools for JianyingPro video editor. Mac version.</description>
