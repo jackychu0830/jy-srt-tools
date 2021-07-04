@@ -25,7 +25,8 @@ import java.util.Objects;
 public class JyFontPanel extends JPanel {
 
     private final JySrtTools jySrtTools;
-    private final JList<JyFont> fontList;
+//    private final JList<JyFont> fontList;
+    private final JTable fontTable;
     private final JTextArea exampleTextArea;
     private final JTextArea originTextArea;
     private final String originText;
@@ -39,18 +40,36 @@ public class JyFontPanel extends JPanel {
         this.jySrtTools = jySrtTools;
         setLayout(new BorderLayout());
 
-        JPanel fontListPanel = new JPanel();
-        fontListPanel.setLayout(new BorderLayout());
-        fontListPanel.add(new JLabel("<html><span style='font-size:20px'>剪映內建字型</span></html>", JLabel.LEFT), BorderLayout.NORTH);
+        JPanel fontTablePanel = new JPanel();
+        fontTablePanel.setLayout(new BorderLayout());
+        fontTablePanel.add(new JLabel("<html><span style='font-size:20px'>剪映內建字型</span></html>", JLabel.LEFT), BorderLayout.NORTH);
+        fontTable = new JTable(getTableModel());
+        fontTable.setDefaultRenderer(FontCell.class, new FontCellRender());
+        fontTable.getColumnModel().getColumn(0).setMaxWidth(120);
+        fontTable.getColumnModel().getColumn(0).setResizable(false);
+        fontTable.getColumnModel().getColumn(1).setMaxWidth(180);
+        fontTable.getColumnModel().getColumn(1).setResizable(false);
+        fontTable.setRowHeight(32);
+        fontTable.getTableHeader().setReorderingAllowed(false);
+        fontTable.getTableHeader().setFont(fontTable.getTableHeader().getFont().deriveFont(20f));
+        fontTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        JScrollPane jsp = new JScrollPane(fontTable);
+        jsp.setPreferredSize(new Dimension(300, 600));
+        fontTablePanel.add(jsp, BorderLayout.CENTER);
+        add(fontTablePanel, BorderLayout.WEST);
 
-        fontList = new JList<>(getListModel());
-        fontList.setCellRenderer(new JyFontListCellRender());
-        fontList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        setListEventListener();
-        JScrollPane jsp = new JScrollPane(fontList);
-        jsp.setHorizontalScrollBar(null);
-        fontListPanel.add(jsp, BorderLayout.CENTER);
-        add(fontListPanel, BorderLayout.WEST);
+//        JPanel fontListPanel = new JPanel();
+//        fontListPanel.setLayout(new BorderLayout());
+//        fontListPanel.add(new JLabel("<html><span style='font-size:20px'>剪映內建字型</span></html>", JLabel.LEFT), BorderLayout.NORTH);
+//
+//        fontList = new JList<>(getListModel());
+//        fontList.setCellRenderer(new JyFontListCellRender());
+//        fontList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+//        setListEventListener();
+//        JScrollPane jsp = new JScrollPane(fontList);
+//        jsp.setHorizontalScrollBar(null);
+//        fontListPanel.add(jsp, BorderLayout.CENTER);
+//        add(fontListPanel, BorderLayout.WEST);
 
         originText = "(繁體) 歡迎按讚、訂閱、留言加分享~" + System.lineSeparator() +
                 "(简体) 欢迎按赞、订阅、留言加分享~" + System.lineSeparator() +
@@ -116,7 +135,18 @@ public class JyFontPanel extends JPanel {
         actionPanel.add(buttonsPanel, BorderLayout.CENTER);
         add(actionPanel, BorderLayout.EAST);
 
-        fontList.setSelectedIndex(0);
+//        fontList.setSelectedIndex(0);
+        fontTable.setRowSelectionInterval(0, 0);
+    }
+
+    private JyFontTableModel getTableModel() {
+        try {
+            return new JyFontTableModel(JyUtils.getAllJyFonts());
+        } catch (JySrtToolsException e) {
+            JOptionPane.showMessageDialog(jySrtTools,
+                    new ErrorMessagePanel(e), "產生字型列表錯誤", JOptionPane.ERROR_MESSAGE);
+        }
+        return null;
     }
 
     private JyFontListModel getListModel() {
@@ -145,23 +175,23 @@ public class JyFontPanel extends JPanel {
         });
     }
 
-    private void setListEventListener() {
-        fontList.addListSelectionListener(event -> {
-            if (!event.getValueIsAdjusting()) {
-                JList<JyFont> list = (JList<JyFont>) event.getSource();
-                selectedFont = list.getSelectedValue();
-                if (selectedFont != null) {
-                    exampleTextArea.setFont(selectedFont.getFont());
-                    btnReplace.setEnabled(true);
-
-                    btnReset.setEnabled(selectedFont.isReplaced());
-                } else {
-                    btnReplace.setEnabled(false);
-                    btnReset.setEnabled(false);
-                }
-            }
-        });
-    }
+//    private void setListEventListener() {
+//        fontList.addListSelectionListener(event -> {
+//            if (!event.getValueIsAdjusting()) {
+//                JList<JyFont> list = (JList<JyFont>) event.getSource();
+//                selectedFont = list.getSelectedValue();
+//                if (selectedFont != null) {
+//                    exampleTextArea.setFont(selectedFont.getFont());
+//                    btnReplace.setEnabled(true);
+//
+//                    btnReset.setEnabled(selectedFont.isReplaced());
+//                } else {
+//                    btnReplace.setEnabled(false);
+//                    btnReset.setEnabled(false);
+//                }
+//            }
+//        });
+//    }
 
     private void textAreaCaretChange() {
         Highlighter.HighlightPainter painter = new DefaultHighlighter.DefaultHighlightPainter(Color.CYAN);
@@ -286,8 +316,7 @@ public class JyFontPanel extends JPanel {
 
     private void resetFont() {
         Path target = Paths.get(selectedFont.getFile().getAbsolutePath());
-        Path source = Paths.get(target.getParent().toString(),
-                selectedFont.getName() + "." + selectedFont.getReplacedName() + ".bak");
+        Path source = Paths.get(selectedFont.getBackupPath());
         try {
             File old = new File(source.toString());
             Files.copy(source, target, StandardCopyOption.REPLACE_EXISTING);
@@ -309,17 +338,17 @@ public class JyFontPanel extends JPanel {
     }
 
     public void reloadFontList() {
-        String name = selectedFont.getName();
-        fontList.removeAll();
-        fontList.setModel(getListModel());
-        fontList.setSelectedIndex(0);
-
-        ListModel<JyFont> lm = fontList.getModel();
-        for (int i = 0; i < lm.getSize(); i++) {
-            if (lm.getElementAt(i).getName().equals(name)) {
-                fontList.setSelectedValue(lm.getElementAt(i), true);
-                break;
-            }
-        }
+//        String name = selectedFont.getName();
+//        fontList.removeAll();
+//        fontList.setModel(getListModel());
+//        fontList.setSelectedIndex(0);
+//
+//        ListModel<JyFont> lm = fontList.getModel();
+//        for (int i = 0; i < lm.getSize(); i++) {
+//            if (lm.getElementAt(i).getName().equals(name)) {
+//                fontList.setSelectedValue(lm.getElementAt(i), true);
+//                break;
+//            }
+//        }
     }
 }
