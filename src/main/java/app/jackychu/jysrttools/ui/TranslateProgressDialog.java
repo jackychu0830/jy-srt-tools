@@ -108,15 +108,16 @@ public class TranslateProgressDialog extends JDialog {
                     label.setText("翻譯完畢");
                     progressBar.setValue(100);
 
-                } catch (IOException | InterruptedException | JySrtToolsException e) {
+                } catch (Throwable e) {
                     JOptionPane.showMessageDialog(parent,
                             new ErrorMessagePanel(e), "翻譯失敗", JOptionPane.ERROR_MESSAGE);
+                } finally {
+                    btnOk.setEnabled(true);
                 }
-
-                btnOk.setEnabled(true);
                 return null;
             }
         };
+
         sw.execute();
         setVisible(true);
     }
