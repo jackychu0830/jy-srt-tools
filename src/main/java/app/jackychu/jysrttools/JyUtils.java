@@ -233,12 +233,12 @@ public class JyUtils {
 
         List<JyFont> fonts = new ArrayList<>();
         for (File f : Objects.requireNonNull(files)) {
-            JyFont jyf = new JyFont(f);
-            if (bakList.contains(jyf.getName())) {
-                jyf.setReplaced(true);
-                jyf.setReplacedName(bakFiles.get(jyf.getName()));
+            String name = f.getName().split("\\.")[0];
+            if (bakList.contains(name)) {
+                fonts.add(new JyFont(f, bakFiles.get(name)));
+            } else {
+                fonts.add(new JyFont(f));
             }
-            fonts.add(jyf);
         }
 
         return fonts;
