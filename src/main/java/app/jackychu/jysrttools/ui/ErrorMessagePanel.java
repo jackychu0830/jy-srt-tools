@@ -11,8 +11,7 @@ public class ErrorMessagePanel extends JPanel {
         String message = th.getMessage() == null ? th.toString() : th.getMessage();
         setLayout(new BorderLayout());
         String title = message.split("(?<=!)")[0];
-        message = message.replaceFirst(title, "").trim();
-        message += th.getClass();
+        message += System.lineSeparator() + th.getClass();
         message += System.lineSeparator() + System.lineSeparator() + trimStackTrace(th.getStackTrace());
         JTextArea textArea = new JTextArea(message);
         textArea.setLineWrap(true);
