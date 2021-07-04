@@ -126,14 +126,14 @@ public class JyUtils {
         FileReader reader;
         try {
             reader = new FileReader(filename, StandardCharsets.UTF_8);
-        } catch (IOException e) {
+        } catch (Exception e) {
             throw new JySrtToolsException("開啟草稿檔案錯誤! " + System.lineSeparator() + e.getMessage(), e);
         }
 
         JSONObject json;
         try {
             json = (JSONObject) jsonParser.parse(reader);
-        } catch (IOException | ParseException e) {
+        } catch (Exception e) {
             throw new JySrtToolsException("分析草稿內容錯誤! " + System.lineSeparator() + e.getMessage(), e);
         }
 

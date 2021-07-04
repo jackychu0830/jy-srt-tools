@@ -84,6 +84,7 @@ public class JySrtTools extends JFrame {
         jyTextPanel = new JyTextPanel(this);
         jyFontPanel = new JyFontPanel(this);
         JTabbedPane tabPanel = new JTabbedPane();
+        tabPanel.setFont(tabPanel.getFont().deriveFont(16f));
         tabPanel.add("草稿文字處理", jyTextPanel);
         tabPanel.add("剪映字型管理", jyFontPanel);
         add(tabPanel);

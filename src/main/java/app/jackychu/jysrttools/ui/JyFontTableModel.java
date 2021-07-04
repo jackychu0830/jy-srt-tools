@@ -21,6 +21,10 @@ public class JyFontTableModel extends AbstractTableModel {
         this.fontList = fontList;
     }
 
+    public List<JyFont> getFontList() {
+        return fontList;
+    }
+
     @Override
     public String getColumnName(int column) {
         return columnNames[column];
