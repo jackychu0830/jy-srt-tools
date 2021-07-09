@@ -13,10 +13,12 @@
 2. 下載剪映字幕工具箱式 [1.2.135 版](https://github.com/jackychu0830/jy-srt-tools/releases/download/1.2.135-Mac/jy-srt-tools-1.2.135-Mac.jar)
 3. 滑鼠雙擊 jy-srt-tools-1.2.135-Mac.jar 執行程式
 
+
+## 使用說明
+https://youtu.be/1oGXHRTYkPk
+
+
 ## 執行畫面
 ![畫面1](https://github.com/jackychu0830/jy-srt-tools/raw/mac/screenshot-mac.png)
 ![畫面2](https://github.com/jackychu0830/jy-srt-tools/raw/mac/screenshot-mac2.png)
 
-
-## 使用說明
-https://youtu.be/1oGXHRTYkPk
