@@ -71,8 +71,8 @@ public class JyDraft {
         JSONArray tracks = (JSONArray) this.info.get("tracks");
         for (Object track : tracks.toArray()) {
             JSONObject tk = (JSONObject) track;
-            // only flag=1 and type=text is subtitle
-            if (!(tk.get("flag").toString().equals("1") && tk.get("type").toString().equals("text"))) continue;
+            // only flag=2 and type=text is subtitle
+            if (!(tk.get("flag").toString().equals("2") && tk.get("type").toString().equals("text"))) continue;
             JSONArray segments = (JSONArray) tk.get("segments");
             for (Object segment : segments.toArray()) {
                 String materialId = ((JSONObject) segment).get("material_id").toString();
@@ -138,8 +138,8 @@ public class JyDraft {
         JSONArray tracks = (JSONArray) this.info.get("tracks");
         for (Object track : tracks.toArray()) {
             JSONObject tk = (JSONObject) track;
-            // only flag=1 and type=text is subtitle
-            if (!(tk.get("flag").toString().equals("1") && tk.get("type").toString().equals("text"))) continue;
+            // only flag=2 and type=text is subtitle
+            if (!(tk.get("flag").toString().equals("2") && tk.get("type").toString().equals("text"))) continue;
             JSONArray segments = (JSONArray) tk.get("segments");
             for (Object segment : segments.toArray()) {
                 String materialId = ((JSONObject) segment).get("material_id").toString();

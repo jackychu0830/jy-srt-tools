@@ -28,7 +28,7 @@ public class DraftTextsPanel extends JPanel {
 
     public void setTexts(JyDraft draft) throws JySrtToolsException {
         textArea.setText("");
-        jySrtTools.getJyFontPanel().setText(null);
+        // jySrtTools.getJyFontPanel().setText(null);
 
         if (draft == null) return;
         StringBuilder sb = new StringBuilder();
@@ -36,6 +36,6 @@ public class DraftTextsPanel extends JPanel {
             sb.append(text).append(System.lineSeparator());
         }
         textArea.setText(sb.toString());
-        jySrtTools.getJyFontPanel().setText(sb.toString());
+        // jySrtTools.getJyFontPanel().setText(sb.toString());
     }
 }
