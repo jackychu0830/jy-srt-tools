@@ -25,8 +25,8 @@ public class JySrtTools extends JFrame {
 
     @Getter
     private JyTextPanel jyTextPanel;
-    @Getter
-    private JyFontPanel jyFontPanel;
+    // @Getter
+    // private JyFontPanel jyFontPanel;
 
     public JySrtTools() {
         try {
@@ -82,11 +82,11 @@ public class JySrtTools extends JFrame {
         }
 
         jyTextPanel = new JyTextPanel(this);
-        jyFontPanel = new JyFontPanel(this);
+        // jyFontPanel = new JyFontPanel(this);
         JTabbedPane tabPanel = new JTabbedPane();
         tabPanel.setFont(tabPanel.getFont().deriveFont(16f));
         tabPanel.add("草稿文字處理", jyTextPanel);
-        tabPanel.add("剪映字型管理", jyFontPanel);
+        // tabPanel.add("剪映字型管理", jyFontPanel);
         add(tabPanel);
         setJMenuBar(new JyMenuBar(this));
 
