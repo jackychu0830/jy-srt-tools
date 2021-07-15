@@ -29,6 +29,10 @@ public class JyDraft {
 
     @Setter(AccessLevel.NONE)
     @Getter(AccessLevel.NONE)
+    private List<String> textIds;
+
+    @Setter(AccessLevel.NONE)
+    @Getter(AccessLevel.NONE)
     private List<Subtitle> subtitles;
 
     /**
@@ -40,6 +44,7 @@ public class JyDraft {
     public Map<String, String> getDraftTexts() throws JySrtToolsException {
         // Force clean exist texts
         this.texts = new HashMap<>();
+        this.textIds = new ArrayList<>();
 
         if (this.info == null) {
             loadJyDraftInfo();
@@ -49,10 +54,24 @@ public class JyDraft {
         for (Object txt : txts.toArray()) {
             Object txtId = ((JSONObject) txt).get("id");
             Object txtObj = ((JSONObject) txt).get("content");
-            this.texts.put(txtId.toString(), txtObj.toString());
+            Object txtType = ((JSONObject) txt).get("type");
+            if (txtType.toString().equals("subtitle")) {
+                this.texts.put(txtId.toString(), txtObj.toString());
+                this.textIds.add(txtId.toString());
+            }
         }
 
         return this.texts;
+    }
+
+    /**
+     * Get all text ids inorder
+     * @return The list of text ids
+     * @throws JySrtToolsException Parse draft info json error
+     */
+    public List<String> getDraftTextIds() throws JySrtToolsException {
+        this.getDraftTexts();
+        return this.textIds;
     }
 
     /**
@@ -153,7 +172,7 @@ public class JyDraft {
             for (Object segment : segments.toArray()) {
                 String materialId = ((JSONObject) segment).get("material_id").toString();
                 if (this.texts.containsKey(materialId)) {
-                    String extraMaterialId = ((JSONArray)((JSONObject) segment).get("extra_material_ids")).get(0).toString();
+                    String extraMaterialId = ((JSONArray) ((JSONObject) segment).get("extra_material_ids")).get(0).toString();
                     extraMaterialIds.add(extraMaterialId);
                     segments.remove(segment);
                 }
@@ -162,13 +181,11 @@ public class JyDraft {
 
         // Remove extra materials
         JSONArray extraMaterials = (JSONArray) ((JSONObject) this.info.get("materials")).get("material_animations");
-        for(Object extra : extraMaterials.toArray()) {
+        for (Object extra : extraMaterials.toArray()) {
             JSONObject ex = (JSONObject) extra;
             if (extraMaterialIds.contains(ex.get("id").toString())) {
                 extraMaterials.remove(ex);
             }
         }
-
-
     }
 }

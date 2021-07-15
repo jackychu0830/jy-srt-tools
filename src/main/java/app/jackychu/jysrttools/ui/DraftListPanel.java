@@ -59,11 +59,10 @@ public class DraftListPanel extends JPanel {
             if (!event.getValueIsAdjusting()) {
                 JList<JyDraft> list = (JList<JyDraft>) event.getSource();
                 jySrtTools.setCurrentSelectedDraft(list.getSelectedValue());
+                parent.getActionPanel().enableButtons(false);
                 try {
                     parent.getTextsPanel().setTexts(jySrtTools.getCurrentSelectedDraft());
-                    parent.getActionPanel().enableButtons(true);
                 } catch (JySrtToolsException e) {
-                    parent.getActionPanel().enableButtons(false);
                     JOptionPane.showMessageDialog(jySrtTools,
                             new ErrorMessagePanel(e), "草稿資料讀取錯誤", JOptionPane.ERROR_MESSAGE);
                 }

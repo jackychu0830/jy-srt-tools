@@ -84,7 +84,8 @@ public class TranslateProgressDialog extends JDialog {
                     for (String s : str) {
                         String ns = translate.doTranslate(Language.zh_cn, Language.zh_tw, s);
                         // mysterious issue. Sometime the delimiter ||| will becomes | || after translated
-                        ns = ns.replaceAll("\\s", "");
+                        ns = ns.replaceAll("\\|\\s\\|\\|", "\\|\\|\\|");
+                        ns = ns.replaceAll("\\|\\|\\s\\|", "\\|\\|\\|");
                         for (String ss : ns.split("\\|\\|\\|")) {
                             percentage = (int) ((++i * 1.0) / texts.size() * 100);
                             progressBar.setValue(percentage);
@@ -113,6 +114,7 @@ public class TranslateProgressDialog extends JDialog {
                             new ErrorMessagePanel(e), "翻譯失敗", JOptionPane.ERROR_MESSAGE);
                 } finally {
                     btnOk.setEnabled(true);
+                    setVisible(false);
                 }
                 return null;
             }
