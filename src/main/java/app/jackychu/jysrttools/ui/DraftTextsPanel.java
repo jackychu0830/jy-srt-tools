@@ -15,7 +15,7 @@ public class DraftTextsPanel extends JPanel {
         this.jySrtTools = jySrtTools;
         setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
-        JLabel label = new JLabel("<html><span style='font-size:20px'>步驟二: 檢視草稿文字內容</span></html>", JLabel.LEFT);
+        JLabel label = new JLabel("<html><span style='font-size:20px'>步驟二: 檢視草稿字幕內容</span></html>", JLabel.LEFT);
         textArea = new JTextArea();
         textArea.setEditable(false);
         textArea.setFont(textArea.getFont().deriveFont(20f));
@@ -32,10 +32,18 @@ public class DraftTextsPanel extends JPanel {
 
         if (draft == null) return;
         StringBuilder sb = new StringBuilder();
-        for (String text : draft.getDraftTexts().values()) {
-            sb.append(text).append(System.lineSeparator());
+        if (draft.getDraftTextIds().size() == 0) {
+            sb.append("此草稿沒有字幕!")
+                    .append(System.lineSeparator())
+                    .append("請先在剪映裡執行 \"文本 -> 識別字幕\" 功能");
+        } else {
+            for (String id : draft.getDraftTextIds()) {
+                sb.append(draft.getDraftTexts().get(id)).append(System.lineSeparator());
+            }
+            jySrtTools.getJyTextPanel().getActionPanel().enableButtons(true);
         }
         textArea.setText(sb.toString());
+        textArea.setCaretPosition(0);
         // jySrtTools.getJyFontPanel().setText(sb.toString());
     }
 }
