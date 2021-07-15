@@ -138,7 +138,9 @@ public class JyDraft {
         originTexts = (JSONArray) ((JSONObject) this.info.get("materials")).get("texts");
         for (Object originText : originTexts.toArray()) {
             String id = ((JSONObject) originText).get("id").toString();
-            ((JSONObject) originText).put("content", texts.get(id));
+            if (this.texts.containsKey(id)) {
+                ((JSONObject) originText).put("content", texts.get(id));
+            }
         }
     }
 
