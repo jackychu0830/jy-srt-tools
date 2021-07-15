@@ -110,11 +110,11 @@ public class TranslateProgressDialog extends JDialog {
                     progressBar.setValue(100);
 
                 } catch (Throwable e) {
+                    setVisible(false);
                     JOptionPane.showMessageDialog(parent,
                             new ErrorMessagePanel(e), "翻譯失敗", JOptionPane.ERROR_MESSAGE);
                 } finally {
                     btnOk.setEnabled(true);
-                    setVisible(false);
                 }
                 return null;
             }
