@@ -91,7 +91,8 @@ public class JyDraft {
         for (Object track : tracks.toArray()) {
             JSONObject tk = (JSONObject) track;
             // only flag=2 and type=text is subtitle
-            if (!(tk.get("flag").toString().equals("2") && tk.get("type").toString().equals("text"))) continue;
+            if (!((tk.get("flag").toString().equals("1") || tk.get("flag").toString().equals("2")) &&
+                    tk.get("type").toString().equals("text"))) continue;
             JSONArray segments = (JSONArray) tk.get("segments");
             for (Object segment : segments.toArray()) {
                 String materialId = ((JSONObject) segment).get("material_id").toString();
@@ -169,13 +170,20 @@ public class JyDraft {
         for (Object track : tracks.toArray()) {
             JSONObject tk = (JSONObject) track;
             // only flag=2 and type=text is subtitle
-            if (!(tk.get("flag").toString().equals("2") && tk.get("type").toString().equals("text"))) continue;
+            if (!((tk.get("flag").toString().equals("1") || tk.get("flag").toString().equals("2")) &&
+                    tk.get("type").toString().equals("text"))) continue;
             JSONArray segments = (JSONArray) tk.get("segments");
             for (Object segment : segments.toArray()) {
                 String materialId = ((JSONObject) segment).get("material_id").toString();
                 if (this.texts.containsKey(materialId)) {
-                    String extraMaterialId = ((JSONArray) ((JSONObject) segment).get("extra_material_ids")).get(0).toString();
-                    extraMaterialIds.add(extraMaterialId);
+                    String extraMaterialId = null;
+                    if (((JSONObject) segment).containsKey("extra_material_refs")) {
+                        extraMaterialId = ((JSONArray) ((JSONObject) segment).get("extra_material_refs")).get(0).toString();
+                    } else if (((JSONObject) segment).containsKey("extra_material_ids")) {
+                        extraMaterialId = ((JSONArray) ((JSONObject) segment).get("extra_material_ids")).get(0).toString();
+                    }
+                    if (!Objects.isNull(extraMaterialId)) 
+                        extraMaterialIds.add(extraMaterialId);
                     segments.remove(segment);
                 }
             }
