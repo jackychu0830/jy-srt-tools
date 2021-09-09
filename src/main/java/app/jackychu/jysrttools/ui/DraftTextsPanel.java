@@ -35,7 +35,10 @@ public class DraftTextsPanel extends JPanel {
         if (draft.getDraftTextIds().size() == 0) {
             sb.append("此草稿沒有字幕!")
                     .append(System.lineSeparator())
-                    .append("請先在剪映裡執行 \"文本 -> 識別字幕\" 功能");
+                    .append("請先在剪映裡執行")
+                    .append(System.lineSeparator())
+                    .append("\"文本 -> 智能字幕 -> 识别字幕\" 功能");
+            jySrtTools.getJyTextPanel().getActionPanel().enableButtons(false);
         } else {
             for (String id : draft.getDraftTextIds()) {
                 sb.append(draft.getDraftTexts().get(id)).append(System.lineSeparator());
