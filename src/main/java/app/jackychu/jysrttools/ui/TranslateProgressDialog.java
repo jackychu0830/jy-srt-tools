@@ -3,6 +3,7 @@ package app.jackychu.jysrttools.ui;
 import app.jackychu.jysrttools.JyDraft;
 import app.jackychu.jysrttools.JyUtils;
 import com.github.houbb.opencc4j.util.ZhConverterUtil;
+import com.github.houbb.opencc4j.util.ZhTwConverterUtil;
 
 import javax.swing.*;
 import java.awt.*;
@@ -40,7 +41,7 @@ public class TranslateProgressDialog extends JDialog {
         add(btnOk, BorderLayout.SOUTH);
     }
 
-    public void doTranslate(JyDraft draft) {
+    public void doTranslate(String type, JyDraft draft) {
         progressBar.setValue(0);
         label.setText("翻譯中… 0%");
         btnOk.setEnabled(false);
@@ -61,7 +62,14 @@ public class TranslateProgressDialog extends JDialog {
                         progressBar.setValue(percentage);
                         label.setText(String.format("翻譯中… %d%%", percentage));
 
-                        String newStr = ZhConverterUtil.toTraditional(texts.get(txtId));
+                        String newStr = texts.get(txtId);
+                        if (ZhConverterUtil.isTraditional(newStr)) continue;
+                        if (type.equals("tcTranslate")) {
+                            newStr = ZhConverterUtil.toTraditional(newStr);
+                        } else { // twTranslate
+                            newStr = ZhTwConverterUtil.toTraditional(newStr);
+                        }
+
                         newTexts.put(txtId, newStr);
                     }
 

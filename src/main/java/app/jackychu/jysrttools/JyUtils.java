@@ -66,7 +66,7 @@ public class JyUtils {
         }
 
         try {
-            System.out.println(String.format(findCmd, appName));
+            System.out.printf(findCmd + "%n", appName);
             Process process = new ProcessBuilder("find", "/", "-name", appName).start();
             BufferedReader reader = new BufferedReader(
                     new InputStreamReader(process.getInputStream()));
@@ -160,7 +160,7 @@ public class JyUtils {
      * Get JianyingPro draft subtitles in SRT format
      *
      * @param draft JianyingPro draft object
-     * @throws JySrtToolsException get SRt format fail
+     * @throws JySrtToolsException get SRT format fail
      */
     public static String getDraftSubtitlesSRT(JyDraft draft) throws JySrtToolsException {
         List<Subtitle> subtitles = draft.getDraftSubtitles();
@@ -182,6 +182,20 @@ public class JyUtils {
     }
 
     /**
+     * Get JianyingPro draft subtitles in txt format
+     *
+     * @param draft JianyingPro draft object
+     * @throws JySrtToolsException get TXT format fail
+     */
+    public static String getDraftSubtitlesTxt(JyDraft draft) throws JySrtToolsException {
+        StringBuilder sb = new StringBuilder();
+        for (String id : draft.getDraftTextIds()) {
+            sb.append(draft.getDraftTexts().get(id)).append(System.lineSeparator());
+        }
+        return sb.toString();
+    }
+
+    /**
      * Save JyDraft object back to JianyingPro draft info json file
      *
      * @param draft JyDraft object
@@ -199,15 +213,20 @@ public class JyUtils {
      * Export JianyingPro draft subtitles to SRT file
      *
      * @param draft    JyDraft object
-     * @param filename SRt filename
+     * @param filename SRT filename
      * @throws JySrtToolsException Export SRT file fail.
      */
-    public static void exportToSrt(JyDraft draft, String filename) throws JySrtToolsException {
-        String srt = getDraftSubtitlesSRT(draft);
+    public static void exportToFile(JyDraft draft, String filename, String type) throws JySrtToolsException {
+        String data;
+        if (type.equals("srt")) {
+            data = getDraftSubtitlesSRT(draft);
+        } else { // txt
+            data = getDraftSubtitlesTxt(draft);
+        }
         try (FileWriter file = new FileWriter(filename, StandardCharsets.UTF_8)) {
-            file.write(srt);
+            file.write(data);
         } catch (IOException e) {
-            throw new JySrtToolsException("匯出 SRT 檔案錯誤s! " + draft.getName() + System.lineSeparator() + e.getMessage(), e);
+            throw new JySrtToolsException("匯出 " + type + " 檔案錯誤! " + draft.getName() + System.lineSeparator() + e.getMessage(), e);
         }
     }
 
