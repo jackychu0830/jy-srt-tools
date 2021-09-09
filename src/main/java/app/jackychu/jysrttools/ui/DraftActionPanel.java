@@ -28,21 +28,31 @@ public class DraftActionPanel extends JPanel {
         JLabel label = new JLabel("<html><span style='font-size:20px'>步驟三: 執行功能</span></html>", JLabel.LEFT);
 
         JPanel panel = new JPanel();
-        JButton btnTranslate = new JButton("<html><span style='font-size:16px'>简体轉繁體</span></html>");
-        JButton btnExport = new JButton("<html><span style='font-size:16px'>輸出 SRT 檔</span></html>");
+        JButton btnTcTranslate = new JButton("<html><span style='font-size:16px'>简体 轉換為 繁體</span></html>");
+        JButton btnTwTranslate = new JButton("<html><span style='font-size:16px'>简体 翻譯為 台灣正體</span></html>");
+        JButton btnSrtExport = new JButton("<html><span style='font-size:16px'>輸出 SRT 檔</span></html>");
+        JButton btnTxtExport = new JButton("<html><span style='font-size:16px'>輸出 txt 文字檔</span></html>");
         JButton btnRemove = new JButton("<html><span style='font-size:16px'>清除字幕</span></html>");
-        btnTranslate.setEnabled(false);
-        btnExport.setEnabled(false);
+        btnTcTranslate.setEnabled(false);
+        btnTwTranslate.setEnabled(false);
+        btnSrtExport.setEnabled(false);
+        btnTxtExport.setEnabled(false);
         btnRemove.setEnabled(false);
-        buttons.put("translate", btnTranslate);
-        buttons.put("export", btnExport);
+        buttons.put("tcTranslate", btnTcTranslate);
+        buttons.put("twTranslate", btnTwTranslate);
+        buttons.put("srtExport", btnSrtExport);
+        buttons.put("txtExport", btnTxtExport);
         buttons.put("remove", btnRemove);
-        setButtonActionListener("translate");
-        setButtonActionListener("export");
+        setButtonActionListener("tcTranslate");
+        setButtonActionListener("twTranslate");
+        setButtonActionListener("srtExport");
+        setButtonActionListener("txtExport");
         setButtonActionListener("remove");
-        panel.setLayout(new GridLayout(3, 1));
-        panel.add(btnTranslate);
-        panel.add(btnExport);
+        panel.setLayout(new GridLayout(buttons.size(), 1));
+        panel.add(btnTcTranslate);
+        panel.add(btnTwTranslate);
+        panel.add(btnSrtExport);
+        panel.add(btnTxtExport);
         panel.add(btnRemove);
 
         add(label, BorderLayout.NORTH);
@@ -51,9 +61,10 @@ public class DraftActionPanel extends JPanel {
 
     private void setButtonActionListener(String button) {
         switch (button) {
-            case "translate":
+            case "tcTranslate":
+            case "twTranslate":
                 buttons.get(button).addActionListener(e -> {
-                    jySrtTools.getProgressDialog().doTranslate(jySrtTools.getCurrentSelectedDraft());
+                    jySrtTools.getProgressDialog().doTranslate(button, jySrtTools.getCurrentSelectedDraft());
                     try {
                         parent.getTextsPanel().setTexts(jySrtTools.getCurrentSelectedDraft());
                     } catch (JySrtToolsException jye) {
@@ -63,27 +74,30 @@ public class DraftActionPanel extends JPanel {
                     }
                 });
                 break;
-            case "export":
+            case "txtExport":
+            case "srtExport":
                 buttons.get(button).addActionListener(e -> {
+                    String type = button.equals("txtExport") ? "txt" : "srt";
+                    String typeName = button.equals("txtExport") ? "TXT 文字檔" : "SRT 字幕檔";
                     JFileChooser fileChooser = new JFileChooser();
                     fileChooser.setDialogTitle("請選擇要匯出的檔案目錄和名稱");
-                    fileChooser.setSelectedFile(new File(jySrtTools.getCurrentSelectedDraft().getName() + ".srt"));
+                    fileChooser.setSelectedFile(new File(jySrtTools.getCurrentSelectedDraft().getName() + "." + type));
                     fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
                     fileChooser.setAcceptAllFileFilterUsed(false);
-                    FileNameExtensionFilter filter = new FileNameExtensionFilter("SRT 字幕檔", "srt");
+                    FileNameExtensionFilter filter = new FileNameExtensionFilter(typeName, type);
                     fileChooser.addChoosableFileFilter(filter);
                     int result = fileChooser.showSaveDialog(jySrtTools);
                     if (result == JFileChooser.APPROVE_OPTION) {
                         File selectedFile = fileChooser.getSelectedFile();
                         String path = selectedFile.getAbsolutePath();
-                        if (!path.endsWith(".srt")) {
-                            path += ".srt";
+                        if (!path.endsWith("." + type)) {
+                            path += "." + type;
                         }
                         try {
-                            JyUtils.exportToSrt(jySrtTools.getCurrentSelectedDraft(), path);
+                            JyUtils.exportToFile(jySrtTools.getCurrentSelectedDraft(), path, type);
                         } catch (JySrtToolsException jye) {
                             JOptionPane.showMessageDialog(jySrtTools,
-                                    new ErrorMessagePanel(jye), "字幕匯出失敗", JOptionPane.ERROR_MESSAGE);
+                                    new ErrorMessagePanel(jye), "檔案匯出失敗", JOptionPane.ERROR_MESSAGE);
                         }
                     }
 

@@ -4,7 +4,7 @@
     <groupId>app.jackychu</groupId>
     <artifactId>jy-srt-tools</artifactId>
     <packaging>jar</packaging>
-    <version>1.4.160</version>
+    <version>1.5.170</version>
 
     <name>jy-srt-tools-mac</name>
     <description>The SRT tools for JianyingPro video editor. Mac version.</description>
@@ -118,7 +118,7 @@
         <dependency>
             <groupId>com.github.houbb</groupId>
             <artifactId>opencc4j</artifactId>
-            <version>1.6.2</version>
+            <version>1.7.1</version>
         </dependency>
     </dependencies>
 
