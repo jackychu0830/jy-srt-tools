@@ -1,7 +1,7 @@
 # 剪映字幕工具箱 Mac 版
 ## 主要功能：
-1. 草稿文字簡體轉繁體 (台灣正體)
-2. 字幕匯出成 SRT 檔
+1. 草稿字幕簡體轉繁體 或 台灣正體
+2. 字幕匯出成 SRT 檔 及 TXT 文字檔
 3. 刪除影片字幕
 
 
@@ -9,8 +9,8 @@
 1. 安裝 Java 11 執行環境 (https://www.azul.com/downloads/?version=java-11-lts&os=macos&package=jdk)
    * Intel 選擇 x86 64-bit
    * M1 選擇 ARM 64-bit
-2. 下載剪映字幕工具箱式 [1.4.160 版](https://github.com/jackychu0830/jy-srt-tools/releases/download/1.4.160-Mac/jy-srt-tools-1.4.160-Mac.jar)
-3. 滑鼠雙擊 jy-srt-tools-1.4.160-Mac.jar 執行程式
+2. 下載剪映字幕工具箱式 [1.5.170 版](https://github.com/jackychu0830/jy-srt-tools/releases/download/1.5.170-Mac/jy-srt-tools-1.5.170-Mac.jar)
+3. 滑鼠雙擊 jy-srt-tools-1.5.170-Mac.jar 執行程式
 
 
 ## 使用說明
@@ -18,5 +18,5 @@ https://youtu.be/1oGXHRTYkPk
 
 
 ## 執行畫面
-![畫面1](https://github.com/jackychu0830/jy-srt-tools/raw/mac/screenshot-mac.png)
+![畫面1](https://github.com/jackychu0830/jy-srt-tools/raw/mac/screenshot-mac3.png)
 
