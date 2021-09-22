@@ -5,7 +5,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -17,6 +16,71 @@ import java.util.*;
  */
 public class JyUtils {
     final static String ROOT_DRAFT_META_INFO_FILENAME = "root_draft_meta_info.json";
+
+    /**
+     * Get jr-srt-tools version number
+     * @return version number
+     */
+    public static String getVersion() {
+        String version = "N/A";
+        try {
+            InputStream input = JyUtils.class.getClassLoader().getResourceAsStream("config.properties");
+            Properties prop = new Properties();
+            prop.load(input);
+            version = prop.getProperty("version");
+        } catch (IOException e2) {
+            e2.printStackTrace();
+        }
+
+        return version;
+    }
+
+    /**
+     * Get JY version number
+     *
+     * @return JY version number
+     */
+    public static String getJyVersion() {
+        String jyVersion = "N/A";
+
+        String os = System.getProperty("os.name");
+        try {
+            String[] cmd;
+            if (os.toLowerCase(Locale.ROOT).contains("windows")) {
+                cmd = new String[]{"cmd.exe", "dir"};
+            } else {
+                cmd = new String[]{"/usr/bin/bash", "mdls -name kMDItemVersion /Applications/VideoFusion-macOS.app | awk -F'\"' '{print $2}'"};
+            }
+            Process process = new ProcessBuilder(cmd)
+                    .redirectErrorStream(true)
+                    .start();
+
+            ArrayList<String> output = new ArrayList<>();
+            BufferedReader br = new BufferedReader(
+                    new InputStreamReader(process.getInputStream()));
+            String line;
+            while ( (line = br.readLine()) != null )
+                output.add(line);
+
+            //There should really be a timeout here.
+            if (0 != process.waitFor()) {
+                jyVersion = "N/A";
+            }
+
+            jyVersion = output.toString();
+        } catch (IOException | InterruptedException e) {
+            try {
+                InputStream input = JyUtils.class.getClassLoader().getResourceAsStream("config.properties");
+                Properties prop = new Properties();
+                prop.load(input);
+                jyVersion = prop.getProperty("jy_version");
+            } catch (IOException e2) {
+                e2.printStackTrace();
+            }
+        }
+
+        return jyVersion;
+    }
 
     /**
      * Get JY video config path by OS (Mac, Windows)
@@ -141,22 +205,6 @@ public class JyUtils {
     }
 
     /**
-     * Convert time from ms to SRT time string format
-     *
-     * @param time time in ms
-     * @return SRT time
-     */
-    private static String msToTimeStr(long time) {
-        long ms = time / 1000 % 1000;
-        long sec = time / 1000 / 1000 % 60;
-        long min = time / 1000 / 1000 / 60 % 60;
-        long hour = time / 1000 / 1000 / 60 / 60;
-        return String.format("%02d:%02d:%02d,%s", hour, min, sec,
-                StringUtils.rightPad(String.valueOf(ms), 3, "0"));
-
-    }
-
-    /**
      * Get JianyingPro draft subtitles in SRT format
      *
      * @param draft JianyingPro draft object
@@ -165,14 +213,21 @@ public class JyUtils {
     public static String getDraftSubtitlesSRT(JyDraft draft) throws JySrtToolsException {
         List<Subtitle> subtitles = draft.getDraftSubtitles();
         StringBuilder srt = new StringBuilder();
-        int count = 1;
 
         for (Subtitle sub : subtitles) {
-            srt.append(count++)
+            // fix time overlap
+            if (sub.getNum() > 1) {
+                Subtitle preSub = subtitles.get(sub.getNum() - 2); // list index start from 0
+                if (sub.getStartTime() < preSub.getEndTime()) {
+                    sub.setStartTime(preSub.getEndTime());
+                }
+            }
+
+            srt.append(sub.getNum())
                     .append("\n")
-                    .append(msToTimeStr(sub.getStart()))
+                    .append(Subtitle.msToTimeStr(sub.getStartTime()))
                     .append(" --> ")
-                    .append(msToTimeStr(sub.getStart() + sub.getDuration()))
+                    .append(Subtitle.msToTimeStr(sub.getEndTime()))
                     .append("\n")
                     .append(sub.getText())
                     .append("\n\n");

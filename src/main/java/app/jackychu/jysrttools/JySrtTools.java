@@ -25,8 +25,6 @@ public class JySrtTools extends JFrame {
 
     @Getter
     private JyTextPanel jyTextPanel;
-    // @Getter
-    // private JyFontPanel jyFontPanel;
 
     public JySrtTools() {
         try {
@@ -56,10 +54,12 @@ public class JySrtTools extends JFrame {
         setLayout(new BorderLayout());
 
         setTitle("剪映字幕工具箱");
-        setSize(1280, 768);
-        setMinimumSize(new Dimension(1080, 285));
+        setMinimumSize(new Dimension(1385, 335));
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
+
+        setVisible(true);
+        setExtendedState(getExtendedState() | JFrame.MAXIMIZED_BOTH);
 
         // 限制主視窗無法縮的比 minimum size 還要小
         addComponentListener(new ComponentAdapter() {
@@ -82,11 +82,9 @@ public class JySrtTools extends JFrame {
         }
 
         jyTextPanel = new JyTextPanel(this);
-        // jyFontPanel = new JyFontPanel(this);
         JTabbedPane tabPanel = new JTabbedPane();
         tabPanel.setFont(tabPanel.getFont().deriveFont(16f));
         tabPanel.add("草稿字幕處理", jyTextPanel);
-        // tabPanel.add("剪映字型管理", jyFontPanel);
         add(tabPanel);
         setJMenuBar(new JyMenuBar(this));
 

@@ -66,7 +66,7 @@ public class DraftActionPanel extends JPanel {
                 buttons.get(button).addActionListener(e -> {
                     jySrtTools.getProgressDialog().doTranslate(button, jySrtTools.getCurrentSelectedDraft());
                     try {
-                        parent.getTextsPanel().setTexts(jySrtTools.getCurrentSelectedDraft());
+                        parent.getTextsPanel().setSubtitles(jySrtTools.getCurrentSelectedDraft());
                     } catch (JySrtToolsException jye) {
                         parent.getActionPanel().enableButtons(false);
                         JOptionPane.showMessageDialog(jySrtTools,
@@ -134,7 +134,7 @@ public class DraftActionPanel extends JPanel {
                                     new ErrorMessagePanel(jye), "草稿更新存檔失敗", JOptionPane.ERROR_MESSAGE);
                         }
                         try {
-                            parent.getTextsPanel().setTexts(jySrtTools.getCurrentSelectedDraft());
+                            parent.getTextsPanel().setSubtitles(jySrtTools.getCurrentSelectedDraft());
                         } catch (JySrtToolsException jye) {
                             JOptionPane.showMessageDialog(jySrtTools,
                                     new ErrorMessagePanel(jye), "草稿重新戴入失敗", JOptionPane.ERROR_MESSAGE);

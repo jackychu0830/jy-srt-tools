@@ -44,7 +44,7 @@ public class DraftListPanel extends JPanel {
             try {
                 jySrtTools.loadDrafts();
                 jySrtTools.getJyTextPanel().getListPanel().reloadList(jySrtTools.getDrafts());
-                jySrtTools.getJyTextPanel().getTextsPanel().setTexts(null);
+                jySrtTools.getJyTextPanel().getTextsPanel().setSubtitles(null);
             } catch (JySrtToolsException jye) {
                 jySrtTools.getJyTextPanel().getActionPanel().enableButtons(false);
                 JOptionPane.showMessageDialog(jySrtTools,
@@ -61,7 +61,7 @@ public class DraftListPanel extends JPanel {
                 jySrtTools.setCurrentSelectedDraft(list.getSelectedValue());
                 parent.getActionPanel().enableButtons(false);
                 try {
-                    parent.getTextsPanel().setTexts(jySrtTools.getCurrentSelectedDraft());
+                    parent.getTextsPanel().setSubtitles(jySrtTools.getCurrentSelectedDraft());
                 } catch (JySrtToolsException e) {
                     JOptionPane.showMessageDialog(jySrtTools,
                             new ErrorMessagePanel(e), "草稿資料讀取錯誤", JOptionPane.ERROR_MESSAGE);

@@ -102,12 +102,18 @@ public class JyDraft {
                     sub.setText(this.texts.get(materialId));
                     JSONObject target = (JSONObject) ((JSONObject) segment).get("target_timerange");
                     sub.setDuration(Long.parseLong(target.get("duration").toString()));
-                    sub.setStart(Long.parseLong(target.get("start").toString()));
+                    sub.setStartTime(Long.parseLong(target.get("start").toString()));
+                    sub.setEndTime(sub.getStartTime() + sub.getDuration());
                     subtitles.add(sub);
                 }
             }
         }
+
         Collections.sort(subtitles);
+        int index = 1;
+        for (Subtitle sub : subtitles) {
+            sub.setNum(index++);
+        }
 
         return subtitles;
     }

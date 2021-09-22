@@ -25,6 +25,7 @@ public class JyTextPanel extends JPanel {
         add(textsPanel, BorderLayout.CENTER);
 
         actionPanel = new DraftActionPanel(jySrtTools, this);
+//        actionPanel.setPreferredSize(new Dimension(230, 600));
         add(actionPanel, BorderLayout.EAST);
     }
 }
