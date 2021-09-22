@@ -2,12 +2,14 @@ package app.jackychu.jysrttools.ui;
 
 import app.jackychu.jysrttools.JyDraft;
 import app.jackychu.jysrttools.JySrtTools;
+import app.jackychu.jysrttools.JyUtils;
 import app.jackychu.jysrttools.Subtitle;
 import app.jackychu.jysrttools.exception.JySrtToolsException;
 
+import java.util.ArrayList;
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
+import java.util.List;
 
 public class DraftTextsPanel extends JPanel {
     private final JySrtTools jySrtTools;
@@ -21,11 +23,29 @@ public class DraftTextsPanel extends JPanel {
 
         subtitleTable = new JTable(new DraftSubtitleTableModel(new ArrayList<>()));
         subtitleTable.setDefaultRenderer(Subtitle.class, new SubtitleCellRender());
+        subtitleTable.setDefaultEditor(Subtitle.class, new SubtitleCellEditor());
         subtitleTable.setRowHeight(24);
         subtitleTable.getTableHeader().setReorderingAllowed(false);
         subtitleTable.getTableHeader().setFont(subtitleTable.getTableHeader().getFont().deriveFont(16f));
         subtitleTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         setTableColumnSize();
+
+        subtitleTable.addPropertyChangeListener("tableCellEditor", e -> {
+            if (!subtitleTable.isEditing()) {
+                DraftSubtitleTableModel dm = (DraftSubtitleTableModel) subtitleTable.getModel();
+                if (dm.isDirty()) {
+                    Subtitle sub = dm.getSubtitles().get(subtitleTable.getSelectedRow());
+                    try {
+                        this.jySrtTools.getCurrentSelectedDraft().updateDraftText(sub.getId(), sub.getText());
+                        JyUtils.saveDraft(this.jySrtTools.getCurrentSelectedDraft());
+                    } catch (JySrtToolsException ex) {
+                        JOptionPane.showMessageDialog(this,
+                                new ErrorMessagePanel(ex), "儲存修改失敗", JOptionPane.ERROR_MESSAGE);
+                    }
+                    dm.setDirty(false);
+                }
+            }
+        });
 
         setLayout(new BorderLayout());
         add(label, BorderLayout.NORTH);

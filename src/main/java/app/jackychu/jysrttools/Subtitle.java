@@ -3,6 +3,8 @@ package app.jackychu.jysrttools;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.Objects;
+
 @Data
 public class Subtitle implements Comparable<Subtitle> {
     private String id;
@@ -31,5 +33,18 @@ public class Subtitle implements Comparable<Subtitle> {
         return String.format("%02d:%02d:%02d,%s", hour, min, sec,
                 StringUtils.rightPad(String.valueOf(ms), 3, "0"));
 
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Subtitle subtitle = (Subtitle) o;
+        return num == subtitle.num && startTime == subtitle.startTime && endTime == subtitle.endTime && duration == subtitle.duration && Objects.equals(id, subtitle.id) && Objects.equals(text, subtitle.text);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, num, text, startTime, endTime, duration);
     }
 }

@@ -65,6 +65,18 @@ public class JyDraft {
     }
 
     /**
+     * Update specified draft text
+     * @param id text id
+     * @param value text
+     */
+    public void updateDraftText(String id, String value) {
+        if (texts.containsKey(id)) {
+            this.texts.put(id, value);
+            this.updateDraftInfoTexts(this.texts);
+        }
+    }
+
+    /**
      * Get all text ids inorder
      * @return The list of text ids
      * @throws JySrtToolsException Parse draft info json error
