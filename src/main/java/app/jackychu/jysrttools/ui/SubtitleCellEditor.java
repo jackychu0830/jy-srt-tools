@@ -22,7 +22,7 @@ public class SubtitleCellEditor extends DefaultCellEditor {
     @Override
     public Component getTableCellEditorComponent(JTable table,
                                                  Object value, boolean isSelected, int row, int column) {
-        this.textField.setText(((Subtitle)value).getText());
+        this.textField.setText(((Subtitle) value).getText());
         return this.textField;
     }
 }

@@ -1,7 +1,6 @@
 package app.jackychu.jysrttools.ui;
 
 import app.jackychu.jysrttools.Subtitle;
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,28 +11,21 @@ import java.util.Objects;
 public class DraftSubtitleTableModel extends DefaultTableModel {
     @Getter
     private final List<Subtitle> subtitles;
-
-    @Getter
-    @Setter
-    private boolean dirty;
-
     private final String[] columnNames = new String[]{
             "編號", "開始時間", "結束時間", "字幕"
     };
-
     private final Class<Subtitle>[] columnClass = new Class[]{
 //            Integer.class, String.class, String.class, String.class
             Subtitle.class, Subtitle.class, Subtitle.class, Subtitle.class
     };
+    @Getter
+    @Setter
+    private boolean dirty;
 
     public DraftSubtitleTableModel(List<Subtitle> subtitles) {
         this.subtitles = subtitles;
         this.dirty = false;
     }
-
-//    public List<Subtitle> getSubtitles() {
-//        return subtitles;
-//    }
 
     @Override
     public String getColumnName(int column) {
@@ -58,10 +50,7 @@ public class DraftSubtitleTableModel extends DefaultTableModel {
 
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
-        if (columnIndex == 3) {
-            return true;
-        }
-        return false;
+        return columnIndex == 3;
     }
 
     @Override

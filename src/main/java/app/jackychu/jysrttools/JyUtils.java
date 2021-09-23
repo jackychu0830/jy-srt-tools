@@ -1,7 +1,6 @@
 package app.jackychu.jysrttools;
 
 import app.jackychu.jysrttools.exception.JySrtToolsException;
-import org.apache.commons.lang3.StringUtils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -19,6 +18,7 @@ public class JyUtils {
 
     /**
      * Get jr-srt-tools version number
+     *
      * @return version number
      */
     public static String getVersion() {
@@ -59,7 +59,7 @@ public class JyUtils {
             BufferedReader br = new BufferedReader(
                     new InputStreamReader(process.getInputStream()));
             String line;
-            while ( (line = br.readLine()) != null )
+            while ((line = br.readLine()) != null)
                 output.add(line);
 
             //There should really be a timeout here.

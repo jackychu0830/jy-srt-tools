@@ -66,7 +66,8 @@ public class JyDraft {
 
     /**
      * Update specified draft text
-     * @param id text id
+     *
+     * @param id    text id
      * @param value text
      */
     public void updateDraftText(String id, String value) {
@@ -78,6 +79,7 @@ public class JyDraft {
 
     /**
      * Get all text ids inorder
+     *
      * @return The list of text ids
      * @throws JySrtToolsException Parse draft info json error
      */
@@ -97,34 +99,35 @@ public class JyDraft {
             getDraftTexts();
         }
 
-
-        List<Subtitle> subtitles = new ArrayList<>();
-        JSONArray tracks = (JSONArray) this.info.get("tracks");
-        for (Object track : tracks.toArray()) {
-            JSONObject tk = (JSONObject) track;
-            // only flag=2 and type=text is subtitle
-            if (!((tk.get("flag").toString().equals("1") || tk.get("flag").toString().equals("2")) &&
-                    tk.get("type").toString().equals("text"))) continue;
-            JSONArray segments = (JSONArray) tk.get("segments");
-            for (Object segment : segments.toArray()) {
-                String materialId = ((JSONObject) segment).get("material_id").toString();
-                if (this.texts.containsKey(materialId)) {
-                    Subtitle sub = new Subtitle();
-                    sub.setId(materialId);
-                    sub.setText(this.texts.get(materialId));
-                    JSONObject target = (JSONObject) ((JSONObject) segment).get("target_timerange");
-                    sub.setDuration(Long.parseLong(target.get("duration").toString()));
-                    sub.setStartTime(Long.parseLong(target.get("start").toString()));
-                    sub.setEndTime(sub.getStartTime() + sub.getDuration());
-                    subtitles.add(sub);
+        if (subtitles == null) {
+            subtitles = new ArrayList<>();
+            JSONArray tracks = (JSONArray) this.info.get("tracks");
+            for (Object track : tracks.toArray()) {
+                JSONObject tk = (JSONObject) track;
+                // only flag=2 and type=text is subtitle
+                if (!((tk.get("flag").toString().equals("1") || tk.get("flag").toString().equals("2")) &&
+                        tk.get("type").toString().equals("text"))) continue;
+                JSONArray segments = (JSONArray) tk.get("segments");
+                for (Object segment : segments.toArray()) {
+                    String materialId = ((JSONObject) segment).get("material_id").toString();
+                    if (this.texts.containsKey(materialId)) {
+                        Subtitle sub = new Subtitle();
+                        sub.setId(materialId);
+                        sub.setText(this.texts.get(materialId));
+                        JSONObject target = (JSONObject) ((JSONObject) segment).get("target_timerange");
+                        sub.setDuration(Long.parseLong(target.get("duration").toString()));
+                        sub.setStartTime(Long.parseLong(target.get("start").toString()));
+                        sub.setEndTime(sub.getStartTime() + sub.getDuration());
+                        subtitles.add(sub);
+                    }
                 }
             }
-        }
 
-        Collections.sort(subtitles);
-        int index = 1;
-        for (Subtitle sub : subtitles) {
-            sub.setNum(index++);
+            Collections.sort(subtitles);
+            int index = 1;
+            for (Subtitle sub : subtitles) {
+                sub.setNum(index++);
+            }
         }
 
         return subtitles;
@@ -200,7 +203,7 @@ public class JyDraft {
                     } else if (((JSONObject) segment).containsKey("extra_material_ids")) {
                         extraMaterialId = ((JSONArray) ((JSONObject) segment).get("extra_material_ids")).get(0).toString();
                     }
-                    if (!Objects.isNull(extraMaterialId)) 
+                    if (!Objects.isNull(extraMaterialId))
                         extraMaterialIds.add(extraMaterialId);
                     segments.remove(segment);
                 }

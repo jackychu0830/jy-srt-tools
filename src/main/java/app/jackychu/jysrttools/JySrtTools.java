@@ -22,7 +22,8 @@ public class JySrtTools extends JFrame {
     private JyDraft currentSelectedDraft = null;
     @Getter
     private TranslateProgressDialog progressDialog;
-
+    @Getter
+    private FindReplaceDialog findReplaceDialog;
     @Getter
     private JyTextPanel jyTextPanel;
 
@@ -89,6 +90,7 @@ public class JySrtTools extends JFrame {
         setJMenuBar(new JyMenuBar(this));
 
         progressDialog = new TranslateProgressDialog(this, true);
+        findReplaceDialog = new FindReplaceDialog(this, false);
     }
 
     public void loadDrafts() throws JySrtToolsException {

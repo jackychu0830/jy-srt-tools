@@ -13,11 +13,8 @@ public class Subtitle implements Comparable<Subtitle> {
     private long startTime;
     private long endTime;
     private long duration;
-
-    @Override
-    public int compareTo(Subtitle sub) {
-        return (int) (this.startTime - sub.startTime);
-    }
+    private String findingText;
+    private boolean found;
 
     /**
      * Convert time from ms to SRT time string format
@@ -33,6 +30,11 @@ public class Subtitle implements Comparable<Subtitle> {
         return String.format("%02d:%02d:%02d,%s", hour, min, sec,
                 StringUtils.rightPad(String.valueOf(ms), 3, "0"));
 
+    }
+
+    @Override
+    public int compareTo(Subtitle sub) {
+        return (int) (this.startTime - sub.startTime);
     }
 
     @Override

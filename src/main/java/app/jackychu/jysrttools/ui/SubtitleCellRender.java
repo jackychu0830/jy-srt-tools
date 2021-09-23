@@ -5,6 +5,7 @@ import app.jackychu.jysrttools.Subtitle;
 import javax.swing.*;
 import javax.swing.table.TableCellRenderer;
 import java.awt.*;
+import java.util.Objects;
 
 public class SubtitleCellRender extends JLabel implements TableCellRenderer {
 
@@ -14,22 +15,28 @@ public class SubtitleCellRender extends JLabel implements TableCellRenderer {
 
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-        Subtitle srt = (Subtitle) value;
+        Subtitle sub = (Subtitle) value;
 
         setFont(getFont().deriveFont(16f));
 
         switch (column) {
             case 0:
-                setText(String.valueOf(srt.getNum()));
+                setText(String.valueOf(sub.getNum()));
                 break;
             case 1:
-                setText(Subtitle.msToTimeStr(srt.getStartTime()));
+                setText(Subtitle.msToTimeStr(sub.getStartTime()));
                 break;
             case 2:
-                setText(Subtitle.msToTimeStr(srt.getEndTime()));
+                setText(Subtitle.msToTimeStr(sub.getEndTime()));
                 break;
             case 3:
-                setText(srt.getText());
+                if (sub.getFindingText() != null && !Objects.equals(sub.getFindingText(), "")) {
+                    String str = sub.getText().replace(sub.getFindingText(),
+                            "<span style=\"background-color:#fff68f;\">" + sub.getFindingText() + "</span>");
+                    setText("<html>" + str + "</html>");
+                } else {
+                    setText(sub.getText());
+                }
         }
 
         if (isSelected) {

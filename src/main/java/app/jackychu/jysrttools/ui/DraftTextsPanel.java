@@ -5,16 +5,17 @@ import app.jackychu.jysrttools.JySrtTools;
 import app.jackychu.jysrttools.JyUtils;
 import app.jackychu.jysrttools.Subtitle;
 import app.jackychu.jysrttools.exception.JySrtToolsException;
+import lombok.Getter;
 
-import java.util.ArrayList;
 import javax.swing.*;
 import java.awt.*;
-import java.util.List;
+import java.util.ArrayList;
 
 public class DraftTextsPanel extends JPanel {
     private final JySrtTools jySrtTools;
-    private JTable subtitleTable;
-    
+    @Getter
+    private final JTable subtitleTable;
+
     public DraftTextsPanel(JySrtTools jySrtTools) {
         this.jySrtTools = jySrtTools;
         setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
@@ -35,13 +36,7 @@ public class DraftTextsPanel extends JPanel {
                 DraftSubtitleTableModel dm = (DraftSubtitleTableModel) subtitleTable.getModel();
                 if (dm.isDirty()) {
                     Subtitle sub = dm.getSubtitles().get(subtitleTable.getSelectedRow());
-                    try {
-                        this.jySrtTools.getCurrentSelectedDraft().updateDraftText(sub.getId(), sub.getText());
-                        JyUtils.saveDraft(this.jySrtTools.getCurrentSelectedDraft());
-                    } catch (JySrtToolsException ex) {
-                        JOptionPane.showMessageDialog(this,
-                                new ErrorMessagePanel(ex), "儲存修改失敗", JOptionPane.ERROR_MESSAGE);
-                    }
+                    saveSubtitleChanges(sub);
                     dm.setDirty(false);
                 }
             }
@@ -53,6 +48,16 @@ public class DraftTextsPanel extends JPanel {
         jsp.setPreferredSize(new Dimension(500, 600));
 
         add(new JScrollPane(subtitleTable), BorderLayout.CENTER);
+    }
+
+    public void saveSubtitleChanges(Subtitle sub) {
+        try {
+            this.jySrtTools.getCurrentSelectedDraft().updateDraftText(sub.getId(), sub.getText());
+            JyUtils.saveDraft(this.jySrtTools.getCurrentSelectedDraft());
+        } catch (JySrtToolsException ex) {
+            JOptionPane.showMessageDialog(this,
+                    new ErrorMessagePanel(ex), "儲存修改失敗", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     public void setSubtitles(JyDraft draft) throws JySrtToolsException {
