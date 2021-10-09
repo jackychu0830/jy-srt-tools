@@ -76,7 +76,7 @@ public class JySrtTools extends JFrame {
         });
 
         try {
-            Image image = ImageIO.read(Objects.requireNonNull(this.getClass().getClassLoader().getResourceAsStream("icon.png")));
+            Image image = ImageIO.read(Objects.requireNonNull(this.getClass().getClassLoader().getResourceAsStream("images/icon.png")));
             setIconImage(new ImageIcon(image).getImage());
         } catch (IOException e) {
             e.printStackTrace();

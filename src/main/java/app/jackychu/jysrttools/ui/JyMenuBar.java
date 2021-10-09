@@ -64,7 +64,7 @@ public class JyMenuBar extends JMenuBar {
             Object[] options = {"知道了"};
             ImageIcon icon = null;
             try {
-                Image image = ImageIO.read(Objects.requireNonNull(this.getClass().getClassLoader().getResourceAsStream("icon.png")));
+                Image image = ImageIO.read(Objects.requireNonNull(this.getClass().getClassLoader().getResourceAsStream("images/icon.png")));
                 icon = new ImageIcon(new ImageIcon(image).getImage().getScaledInstance(96, 96, Image.SCALE_DEFAULT));
 
             } catch (IOException ioe) {
@@ -83,26 +83,23 @@ public class JyMenuBar extends JMenuBar {
     }
 
     private void addMenuItemActionListener() {
-        ActionListener actionListener = new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (jySrtTools.getCurrentSelectedDraft() != null) {
-                    try {
-                        if (jySrtTools.getCurrentSelectedDraft().getDraftTextIds().size() > 0) {
+        ActionListener actionListener = e -> {
+            if (jySrtTools.getCurrentSelectedDraft() != null) {
+                try {
+                    if (jySrtTools.getCurrentSelectedDraft().getDraftTextIds().size() > 0) {
 //                            jySrtTools.getJyTextPanel().getTextsPanel().getSubtitleTable().putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
-                            if (jySrtTools.getJyTextPanel().getTextsPanel().getSubtitleTable().isEditing()) {
-                                jySrtTools.getJyTextPanel().getTextsPanel().getSubtitleTable().getCellEditor().cancelCellEditing();
-                            }
-                            jySrtTools.getFindReplaceDialog().setVisible(true);
-                            jySrtTools.getFindReplaceDialog().setReplaceMode(e.getSource() == replaceMenuItem);
+                        if (jySrtTools.getJyTextPanel().getTextsPanel().getSubtitleTable().isEditing()) {
+                            jySrtTools.getJyTextPanel().getTextsPanel().getSubtitleTable().getCellEditor().cancelCellEditing();
                         }
-                    } catch (JySrtToolsException ex) {
-                        JOptionPane.showMessageDialog(jySrtTools,
-                                new ErrorMessagePanel(ex), "請選選擇有字幕的草稿檔", JOptionPane.ERROR_MESSAGE);
+                        jySrtTools.getFindReplaceDialog().setVisible(true);
+                        jySrtTools.getFindReplaceDialog().setReplaceMode(e.getSource() == replaceMenuItem);
                     }
+                } catch (JySrtToolsException ex) {
+                    JOptionPane.showMessageDialog(jySrtTools,
+                            new ErrorMessagePanel(ex), "請選選擇有字幕的草稿檔", JOptionPane.ERROR_MESSAGE);
                 }
-
             }
+
         };
         findMenuItem.addActionListener(actionListener);
         replaceMenuItem.addActionListener(actionListener);

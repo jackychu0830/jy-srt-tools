@@ -19,7 +19,7 @@ public class DraftListCellRender extends DefaultListCellRenderer {
         String icon = draft.getCoverFilename();
         if (icon == null || icon.length() < 1) {
             try {
-                Image image = ImageIO.read(Objects.requireNonNull(this.getClass().getClassLoader().getResourceAsStream("default_cover.png")));
+                Image image = ImageIO.read(Objects.requireNonNull(this.getClass().getClassLoader().getResourceAsStream("images/default_cover.png")));
                 setIcon(new ImageIcon(image));
             } catch (IOException e) {
                 e.printStackTrace();

@@ -1,0 +1,39 @@
+{
+  "cartoon" : false,
+  "clip" : {
+    "alpha" : 1,
+    "flip" : {
+      "horizontal" : false,
+      "vertical" : false
+    },
+    "rotation" : 0,
+    "scale" : {
+      "x" : 1,
+      "y" : 1
+    },
+    "transform" : {
+      "x" : 0,
+      "y" : -0.73
+    }
+  },
+  "enable_adjust" : true,
+  "enable_lut" : true,
+  "extra_material_refs" : [
+    "${extra_material_refs}"
+  ],
+  "id" : "${id}",
+  "intensifies_audio" : false,
+  "is_tone_modify" : false,
+  "keyframe_refs" : [],
+  "last_nonzero_volume" : 1,
+  "material_id" : "${material_id}",
+  "render_index" : 14000,
+  "reverse" : false,
+  "source_timerange" : null,
+  "speed" : 1,
+  "target_timerange" : {
+    "duration" : ${duration},
+    "start" : ${start}
+  },
+  "volume" : 1
+}

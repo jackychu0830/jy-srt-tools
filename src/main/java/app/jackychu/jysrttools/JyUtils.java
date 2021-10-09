@@ -1,6 +1,7 @@
 package app.jackychu.jysrttools;
 
 import app.jackychu.jysrttools.exception.JySrtToolsException;
+import org.apache.commons.lang3.StringUtils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -317,4 +318,52 @@ public class JyUtils {
 
         return fonts;
     }
+
+    /**
+     * Load subtitles from srt file to JY draft
+     * @param filename SRT file name
+     * @return subtitle lise
+     * @throws JySrtToolsException load srt file error
+     */
+    public static List<Subtitle> loadSrtFile(String filename) throws JySrtToolsException {
+        JSONParser jsonParser = new JSONParser();
+        FileReader reader;
+        try {
+            reader = new FileReader(filename, StandardCharsets.UTF_8);
+        } catch (Exception e) {
+            throw new JySrtToolsException("開啟 SRT 檔案錯誤! " + System.lineSeparator() + e.getMessage(), e);
+        }
+
+        Subtitle sub = null;
+        int subLineCount = 1;
+        List<Subtitle> subtitles = new ArrayList<>();
+        try(BufferedReader br = new BufferedReader(reader)) {
+            for(String line; (line = br.readLine()) != null; ) {
+
+                int num = StringUtils.isNumeric(line) ? Integer.parseInt(line) : -1;
+                if (num != -1) { //number
+                    sub = new Subtitle();
+                    subLineCount = 1;
+                    sub.setNum(num);
+                } else {
+                    if (subLineCount == 1) { //time
+                        subLineCount = 2;
+                        String[] time = line.trim().split(" --> ");
+                        sub.setStartTime(Subtitle.timeStrToMs(time[0]));
+                        sub.setEndTime(Subtitle.timeStrToMs(time[1]));
+                        sub.setDuration(sub.getEndTime() - sub.getStartTime());
+                    } else if (subLineCount == 2){ //text
+                        sub.setText(line.trim());
+                        subtitles.add(sub);
+                        subLineCount = 3;
+                    } // else empty line
+                }
+            }
+
+            return subtitles;
+        } catch (IOException | NullPointerException e) {
+            throw new JySrtToolsException("解析 SRT 檔案錯誤! " + System.lineSeparator() + e.getMessage(), e);
+        }
+    }
+
 }

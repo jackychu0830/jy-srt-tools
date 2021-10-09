@@ -1,0 +1,6 @@
+{
+  "flag" : 1,
+  "id" : "${id}",
+  "segments" : [],
+  "type" : "text"
+}

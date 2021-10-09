@@ -5,8 +5,11 @@ import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.commons.text.StringSubstitutor;
+import org.json.simple.parser.JSONParser;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.json.simple.parser.ParseException;
 
 import java.util.*;
 
@@ -218,5 +221,79 @@ public class JyDraft {
                 extraMaterials.remove(ex);
             }
         }
+    }
+
+    /**
+     * Replace/Import new subtitle instead exist one
+     * @param newSubtitles new subtitle list
+     * @throws JySrtToolsException load subtitle error
+     */
+    public void replaceDraftSubtitles(List<Subtitle> newSubtitles) throws JySrtToolsException {
+        deleteDraftSubtitles();
+
+        JSONParser parser = new JSONParser();
+
+        JSONArray originTexts = (JSONArray) ((JSONObject) this.info.get("materials")).get("texts");
+        JSONArray extraMaterials = (JSONArray) ((JSONObject) this.info.get("materials")).get("material_animations");
+
+        String trackTemp = DraftTemplates.getTemplate("draft_track");
+        Map<String, String> values = new HashMap<>();
+        String trackId = UUID.randomUUID().toString().toUpperCase();
+        values.put("id", trackId);
+        JSONObject trackObj;
+        try {
+            trackObj = (JSONObject) parser.parse(StringSubstitutor.replace(trackTemp, values, "${", "}"));
+        } catch (ParseException e) {
+            throw new JySrtToolsException("新增 SRT 字幕失敗 (Track) " + System.lineSeparator() + e.getMessage(), e);
+        }
+        JSONArray segments = (JSONArray) trackObj.get("segments");
+
+        for(Subtitle sub : newSubtitles) {
+            String extraTemp = DraftTemplates.getTemplate("draft_extra_material");
+            values = new HashMap<>();
+            String extraId = UUID.randomUUID().toString().toUpperCase();
+            values.put("id", extraId);
+            String extraStr = StringSubstitutor.replace(extraTemp, values, "${", "}");
+            try {
+                JSONObject obj = (JSONObject) parser.parse(extraStr);
+                extraMaterials.add(obj);
+            } catch (ParseException e) {
+                throw new JySrtToolsException("新增 SRT 字幕失敗 (Extra Material) " + System.lineSeparator() + e.getMessage(), e);
+            }
+
+            String textTemp = DraftTemplates.getTemplate("draft_text");
+            values = new HashMap<>();
+            values.put("content", sub.getText());
+            values.put("font_path", DraftTemplates.MAC_DEFAULT_FONT_PATH);
+            String textId = UUID.randomUUID().toString().toUpperCase();
+            values.put("id", textId);
+            String textStr = StringSubstitutor.replace(textTemp, values, "${", "}");
+            JSONObject textObj;
+            try {
+                textObj = (JSONObject) parser.parse(textStr);
+                originTexts.add(textObj);
+            } catch (ParseException e) {
+                throw new JySrtToolsException("新增 SRT 字幕失敗 (Text) " + System.lineSeparator() + e.getMessage(), e);
+            }
+
+            String segmentTemp = DraftTemplates.getTemplate("draft_segment");
+            values = new HashMap<>();
+            String segmentId = UUID.randomUUID().toString().toUpperCase();
+            values.put("id", segmentId);
+            values.put("extra_material_refs", extraId);
+            values.put("material_id", textId);
+            values.put("duration", String.valueOf(sub.getDuration()));
+            values.put("start", String.valueOf(sub.getStartTime()));
+            String segmentStr = StringSubstitutor.replace(segmentTemp, values, "${", "}");
+            JSONObject segmentObj;
+            try {
+                segmentObj = (JSONObject) parser.parse(segmentStr);
+                segments.add(segmentObj);
+            } catch (ParseException e) {
+                throw new JySrtToolsException("新增 SRT 字幕失敗 (Segment) " + System.lineSeparator() + e.getMessage(), e);
+            }
+        }
+        JSONArray tracks = (JSONArray) this.info.get("tracks");
+        tracks.add(trackObj);
     }
 }

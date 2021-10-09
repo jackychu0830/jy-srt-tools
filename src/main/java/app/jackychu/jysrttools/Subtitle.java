@@ -29,7 +29,24 @@ public class Subtitle implements Comparable<Subtitle> {
         long hour = time / 1000 / 1000 / 60 / 60;
         return String.format("%02d:%02d:%02d,%s", hour, min, sec,
                 StringUtils.rightPad(String.valueOf(ms), 3, "0"));
+    }
 
+    /**
+     * Convert time from STR time string format to ms
+     * @param str SRT time
+     * @return time in ms
+     */
+    public static long timeStrToMs(String str) {
+        long time = 0;
+        String[] t1 = str.split(",");
+        String[] t2 = t1[0].split(":");
+
+        time += Long.parseLong(t2[0]) * 60 * 60 * 1000 * 1000;
+        time += Long.parseLong(t2[1]) * 60 * 1000 * 1000;
+        time += Long.parseLong(t2[2]) * 1000 * 1000;
+        time += Long.parseLong(t1[1]) * 1000;
+
+        return time;
     }
 
     @Override
@@ -49,4 +66,5 @@ public class Subtitle implements Comparable<Subtitle> {
     public int hashCode() {
         return Objects.hash(id, num, text, startTime, endTime, duration);
     }
+
 }
