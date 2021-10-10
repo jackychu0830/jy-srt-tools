@@ -8,10 +8,6 @@
 4. 字幕編輯修改
 5. 刪除影片字幕
 
-## [Mac 版下載](https://github.com/jackychu0830/jy-srt-tools/tree/mac)
-
-## [Windows 版下載](https://github.com/jackychu0830/jy-srt-tools/tree/win)
-
 ## 執行畫面
 
 ![Mac 版畫面](https://github.com/jackychu0830/jy-srt-tools/raw/mac/screenshot-1.png)
