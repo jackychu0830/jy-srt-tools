@@ -7,7 +7,9 @@ import app.jackychu.jysrttools.exception.JySrtToolsException;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 
 public class FindReplaceDialog extends JDialog {
@@ -18,14 +20,16 @@ public class FindReplaceDialog extends JDialog {
     private final JButton replaceButton;
     private final JButton replaceAllButton;
     private final JPanel replacePanel;
-    private JTextField replaceTextField;
+    private final JTextField replaceTextField;
+    private boolean replaceMode = false;
 
     public FindReplaceDialog(JFrame parent, boolean modal) {
         super(parent, modal);
         this.parent = parent;
 
-//        setSize(400, 150);
         setLocationRelativeTo(null);
+        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+        this.setLocation(dim.width / 2 - this.getSize().width / 2, dim.height / 2 - this.getSize().height / 2);
         setResizable(false);
         setLayout(new GridLayout(2, 1));
         setTitle("尋找");
@@ -73,19 +77,36 @@ public class FindReplaceDialog extends JDialog {
                 KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
                 JComponent.WHEN_IN_FOCUSED_WINDOW);
 
+        String os = System.getProperty("os.name");
+        int cmdKey = Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx(); //KeyEvent.VK_META;
+        if (os.toLowerCase(Locale.ROOT).contains("windows")) {
+            cmdKey = KeyEvent.CTRL_DOWN_MASK;
+        }
+        getRootPane().registerKeyboardAction(e -> this.setReplaceMode(false),
+                KeyStroke.getKeyStroke(KeyEvent.VK_F, cmdKey),
+                JComponent.WHEN_IN_FOCUSED_WINDOW);
+        getRootPane().registerKeyboardAction(e -> this.setReplaceMode(true),
+                KeyStroke.getKeyStroke(KeyEvent.VK_R, cmdKey),
+                JComponent.WHEN_IN_FOCUSED_WINDOW);
+
     }
 
     public void setReplaceMode(boolean replaceMode) {
         replacePanel.setVisible(replaceMode);
         if (replaceMode) {
+            this.replaceTextField.grabFocus();
             this.setTitle("尋找 & 替換");
+            this.replaceMode = true;
         } else {
+            this.findTextField.grabFocus();
             this.setTitle("尋找");
+            this.replaceMode = false;
         }
         this.pack();
     }
 
     private void addButtonsListener(JButton btn) {
+        btn.setFocusable(false);
         btn.addActionListener(e -> {
             if (e.getSource() == clearButton) {
                 findTextField.setText("");
@@ -98,6 +119,7 @@ public class FindReplaceDialog extends JDialog {
             int index = tbl.getSelectedRow();
 
             List<Subtitle> subtitles;
+            int foundCount = 0;
             try {
                 subtitles = jySrtTools.getCurrentSelectedDraft().getDraftSubtitles();
                 int selectedIndex = tbl.getSelectedRow();
@@ -117,15 +139,37 @@ public class FindReplaceDialog extends JDialog {
                     }
                 }
 
+                List<Integer> foundRows = new ArrayList<>();
                 for (Subtitle sub : subtitles) {
                     sub.setFindingText(str);
                     sub.setFound(sub.getText().contains(str));
+                    if (sub.isFound()) {
+                        foundCount++;
+                        foundRows.add(sub.getNum() - 1);
+                    }
                 }
+
                 index = selectNextFoundRow(index, subtitles);
                 jySrtTools.getJyTextPanel().getTextsPanel().setSubtitles(jySrtTools.getCurrentSelectedDraft());
+                selectedIndex = 0;
                 if (index != -1 && !Objects.equals(str, "")) {
                     tbl.setRowSelectionInterval(index, index);
+                    selectedIndex = foundRows.indexOf(index) + 1;
                     tbl.scrollRectToVisible(tbl.getCellRect(index, 0, true));
+                }
+
+                if (e.getSource() == clearButton) {
+                    if (this.replaceMode) {
+                        this.setTitle("尋找 & 替換");
+                    } else {
+                        this.setTitle("尋找");
+                    }
+                } else {
+                    if (this.replaceMode) {
+                        this.setTitle("尋找 & 替換 - " + selectedIndex + "/" + foundCount);
+                    } else {
+                        this.setTitle("尋找 - " + selectedIndex + "/" + foundCount);
+                    }
                 }
             } catch (JySrtToolsException ex) {
                 JOptionPane.showMessageDialog(jySrtTools,

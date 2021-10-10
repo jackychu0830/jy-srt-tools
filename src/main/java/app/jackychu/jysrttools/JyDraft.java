@@ -6,9 +6,9 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.text.StringSubstitutor;
-import org.json.simple.parser.JSONParser;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import java.util.*;
@@ -158,6 +158,7 @@ public class JyDraft {
      * @param texts New texts which want to update
      */
     public void updateDraftInfoTexts(Map<String, String> texts) {
+//        this.subtitles = null;
         this.texts = texts;
         JSONArray originTexts;
         originTexts = (JSONArray) ((JSONObject) this.info.get("materials")).get("texts");
@@ -221,10 +222,13 @@ public class JyDraft {
                 extraMaterials.remove(ex);
             }
         }
+
+        this.subtitles = null;
     }
 
     /**
      * Replace/Import new subtitle instead exist one
+     *
      * @param newSubtitles new subtitle list
      * @throws JySrtToolsException load subtitle error
      */
@@ -248,7 +252,7 @@ public class JyDraft {
         }
         JSONArray segments = (JSONArray) trackObj.get("segments");
 
-        for(Subtitle sub : newSubtitles) {
+        for (Subtitle sub : newSubtitles) {
             String extraTemp = DraftTemplates.getTemplate("draft_extra_material");
             values = new HashMap<>();
             String extraId = UUID.randomUUID().toString().toUpperCase();
@@ -295,5 +299,14 @@ public class JyDraft {
         }
         JSONArray tracks = (JSONArray) this.info.get("tracks");
         tracks.add(trackObj);
+
+        this.subtitles = null;
+    }
+
+    /**
+     * Clean current subtitles after translate or import
+     */
+    public void cleanSubtitles() {
+        this.subtitles = null;
     }
 }

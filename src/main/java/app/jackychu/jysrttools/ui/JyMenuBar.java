@@ -6,7 +6,6 @@ import app.jackychu.jysrttools.exception.JySrtToolsException;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
@@ -93,6 +92,9 @@ public class JyMenuBar extends JMenuBar {
                         }
                         jySrtTools.getFindReplaceDialog().setVisible(true);
                         jySrtTools.getFindReplaceDialog().setReplaceMode(e.getSource() == replaceMenuItem);
+                    } else {
+                        JOptionPane.showMessageDialog(jySrtTools,
+                                "請選選擇有字幕的草稿檔", "找不到字幕", JOptionPane.INFORMATION_MESSAGE);
                     }
                 } catch (JySrtToolsException ex) {
                     JOptionPane.showMessageDialog(jySrtTools,

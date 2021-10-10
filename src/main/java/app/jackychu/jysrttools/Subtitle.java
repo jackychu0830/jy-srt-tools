@@ -33,6 +33,7 @@ public class Subtitle implements Comparable<Subtitle> {
 
     /**
      * Convert time from STR time string format to ms
+     *
      * @param str SRT time
      * @return time in ms
      */

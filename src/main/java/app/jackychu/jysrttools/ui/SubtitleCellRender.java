@@ -32,7 +32,7 @@ public class SubtitleCellRender extends JLabel implements TableCellRenderer {
             case 3:
                 if (sub.getFindingText() != null && !Objects.equals(sub.getFindingText(), "")) {
                     String str = sub.getText().replace(sub.getFindingText(),
-                            "<span style=\"background-color:#fff68f;\">" + sub.getFindingText() + "</span>");
+                            "<span style=\"background-color:#fff68f; color:#000000\">" + sub.getFindingText() + "</span>");
                     setText("<html>" + str + "</html>");
                 } else {
                     setText(sub.getText());

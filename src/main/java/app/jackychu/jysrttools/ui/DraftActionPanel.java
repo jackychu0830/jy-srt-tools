@@ -12,9 +12,9 @@ import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.List;
 
 public class DraftActionPanel extends JPanel {
     private final JySrtTools jySrtTools;
@@ -31,32 +31,32 @@ public class DraftActionPanel extends JPanel {
 
         JPanel panel = new JPanel();
         JButton btnTcTranslate = new JButton("<html><span style='font-size:16px'>简体 轉換為 繁體</span></html>");
-        JButton btnTwTranslate = new JButton("<html><span style='font-size:16px'>简体 翻譯為 台灣正體</span></html>");
+//        JButton btnTwTranslate = new JButton("<html><span style='font-size:16px'>简体 翻譯為 台灣正體</span></html>");
         JButton btnSrtExport = new JButton("<html><span style='font-size:16px'>輸出 SRT 檔</span></html>");
         JButton btnTxtExport = new JButton("<html><span style='font-size:16px'>輸出 txt 文字檔</span></html>");
         JButton btnRemove = new JButton("<html><span style='font-size:16px'>清除字幕</span></html>");
         JButton btnSrtImport = new JButton("<html><span style='font-size:16px'>載入 SRT 檔</span></html>");
         btnTcTranslate.setEnabled(false);
-        btnTwTranslate.setEnabled(false);
+//        btnTwTranslate.setEnabled(false);
         btnSrtExport.setEnabled(false);
         btnTxtExport.setEnabled(false);
         btnRemove.setEnabled(false);
         btnSrtImport.setEnabled(false);
         buttons.put("tcTranslate", btnTcTranslate);
-        buttons.put("twTranslate", btnTwTranslate);
+//        buttons.put("twTranslate", btnTwTranslate);
         buttons.put("srtExport", btnSrtExport);
         buttons.put("txtExport", btnTxtExport);
         buttons.put("remove", btnRemove);
         buttons.put("srtImport", btnSrtImport);
         setButtonActionListener("tcTranslate");
-        setButtonActionListener("twTranslate");
+//        setButtonActionListener("twTranslate");
         setButtonActionListener("srtExport");
         setButtonActionListener("txtExport");
         setButtonActionListener("remove");
         setButtonActionListener("srtImport");
         panel.setLayout(new GridLayout(buttons.size(), 1));
         panel.add(btnTcTranslate);
-        panel.add(btnTwTranslate);
+//        panel.add(btnTwTranslate);
         panel.add(btnSrtExport);
         panel.add(btnTxtExport);
         panel.add(btnRemove);
@@ -72,6 +72,7 @@ public class DraftActionPanel extends JPanel {
             case "twTranslate":
                 buttons.get(button).addActionListener(e -> {
                     jySrtTools.getProgressDialog().doTranslate(button, jySrtTools.getCurrentSelectedDraft());
+                    jySrtTools.getCurrentSelectedDraft().cleanSubtitles();
                     try {
                         parent.getTextsPanel().setSubtitles(jySrtTools.getCurrentSelectedDraft());
                     } catch (JySrtToolsException jye) {
@@ -134,7 +135,7 @@ public class DraftActionPanel extends JPanel {
                             JOptionPane.showMessageDialog(jySrtTools,
                                     new ErrorMessagePanel(jye), "草稿字幕清除失敗", JOptionPane.ERROR_MESSAGE);
                         }
-                       saveDraft();
+                        saveDraft();
                     }
                 });
                 break;

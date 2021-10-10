@@ -321,6 +321,7 @@ public class JyUtils {
 
     /**
      * Load subtitles from srt file to JY draft
+     *
      * @param filename SRT file name
      * @return subtitle lise
      * @throws JySrtToolsException load srt file error
@@ -337,9 +338,12 @@ public class JyUtils {
         Subtitle sub = null;
         int subLineCount = 1;
         List<Subtitle> subtitles = new ArrayList<>();
-        try(BufferedReader br = new BufferedReader(reader)) {
-            for(String line; (line = br.readLine()) != null; ) {
+        try (BufferedReader br = new BufferedReader(reader)) {
+            for (String line; (line = br.readLine()) != null; ) {
 
+                // some srt file with wrong encoding (UTF-8 BOM).
+                // This is how to remove extra character which not belong to UTF-8
+                line = line.replace("\uFEFF", "");
                 int num = StringUtils.isNumeric(line) ? Integer.parseInt(line) : -1;
                 if (num != -1) { //number
                     sub = new Subtitle();
@@ -352,7 +356,7 @@ public class JyUtils {
                         sub.setStartTime(Subtitle.timeStrToMs(time[0]));
                         sub.setEndTime(Subtitle.timeStrToMs(time[1]));
                         sub.setDuration(sub.getEndTime() - sub.getStartTime());
-                    } else if (subLineCount == 2){ //text
+                    } else if (subLineCount == 2) { //text
                         sub.setText(line.trim());
                         subtitles.add(sub);
                         subLineCount = 3;
