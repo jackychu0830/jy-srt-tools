@@ -14,11 +14,11 @@
 
 ### Mac
 
-![Mac 版畫面](https://github.com/jackychu0830/jy-srt-tools/raw/mac/screenshot-mac3.png)
+![Mac 版畫面](https://github.com/jackychu0830/jy-srt-tools/raw/mac/screenshot-1.png)
 
 ### Windows
 
-![Windows 版畫面](https://github.com/jackychu0830/jy-srt-tools/raw/win/screenshot-win2.png)
+![Windows 版畫面](https://github.com/jackychu0830/jy-srt-tools/raw/win/screenshot-1.png)
 
 ## 使用說明
 
