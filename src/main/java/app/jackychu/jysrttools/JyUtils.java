@@ -48,7 +48,10 @@ public class JyUtils {
         try {
             String[] cmd;
             if (os.toLowerCase(Locale.ROOT).contains("windows")) {
-                cmd = new String[]{"cmd.exe", "dir"};
+                InputStream input = JyUtils.class.getClassLoader().getResourceAsStream("config.properties");
+                Properties prop = new Properties();
+                prop.load(input);
+                return prop.getProperty("jy_version");
             } else {
                 cmd = new String[]{"/usr/bin/bash", "mdls -name kMDItemVersion /Applications/VideoFusion-macOS.app | awk -F'\"' '{print $2}'"};
             }
