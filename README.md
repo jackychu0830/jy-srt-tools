@@ -8,6 +8,15 @@
 4. 字幕編輯修改
 5. 刪除影片字幕
 
+## 安裝說明
+1. 安裝 Java 11 執行環境 (https://www.azul.com/downloads/?version=java-11-lts&os=macos&package=jdk)
+   * Intel 選擇 x86 64-bit
+   * M1 選擇 ARM 64-bit
+2. 下載剪映字幕工具箱式 [2.0.210 版](https://github.com/jackychu0830/jy-srt-tools/releases/download/2.0.210-Mac/jy-srt-tools-2.0.210-Mac.jar)
+3. 滑鼠雙擊 jy-srt-tools-2.0.210-Mac.jar 執行程式
+
+## 使用說明
+
 ## 執行畫面
 
 ![Mac 版畫面](https://github.com/jackychu0830/jy-srt-tools/raw/mac/screenshot-1.png)
@@ -15,5 +24,3 @@
 ![字幕尋找](https://github.com/jackychu0830/jy-srt-tools/raw/mac/screenshot-3.png)
 ![字幕替換](https://github.com/jackychu0830/jy-srt-tools/raw/mac/screenshot-4.png)
 ![載入字幕](https://github.com/jackychu0830/jy-srt-tools/raw/mac/screenshot-5.png)
-
-## 使用說明
