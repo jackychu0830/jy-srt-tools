@@ -268,7 +268,7 @@ public class JyDraft {
             String textTemp = DraftTemplates.getTemplate("draft_text");
             values = new HashMap<>();
             values.put("content", sub.getText());
-            values.put("font_path", DraftTemplates.MAC_DEFAULT_FONT_PATH);
+            values.put("font_path", DraftTemplates.getDefaultFontPath());
             String textId = UUID.randomUUID().toString().toUpperCase();
             values.put("id", textId);
             String textStr = StringSubstitutor.replace(textTemp, values, "${", "}");
