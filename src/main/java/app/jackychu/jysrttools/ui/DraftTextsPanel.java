@@ -76,7 +76,7 @@ public class DraftTextsPanel extends JPanel {
 
     private void setTableColumnSize() {
 //        subtitleTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-        subtitleTable.getColumnModel().getColumn(0).setMaxWidth(40);
+        subtitleTable.getColumnModel().getColumn(0).setMaxWidth(50);
         subtitleTable.getColumnModel().getColumn(0).setResizable(false);
         subtitleTable.getColumnModel().getColumn(1).setMaxWidth(115);
         subtitleTable.getColumnModel().getColumn(1).setMinWidth(115);
