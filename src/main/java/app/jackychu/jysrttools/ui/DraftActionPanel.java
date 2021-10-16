@@ -201,8 +201,12 @@ public class DraftActionPanel extends JPanel {
     }
 
     public void enableButtons(boolean enable) {
+        enableButtons(enable, false);
+    }
+
+    public void enableButtons(boolean enable, boolean reload) {
         for (JButton btn : buttons.values()) {
-            if (btn.getText().contains("載入 SRT 檔")) {
+            if (btn.getText().contains("載入 SRT 檔") && !reload) {
                 btn.setEnabled(true);
                 continue;
             }

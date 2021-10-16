@@ -11,12 +11,12 @@ import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.io.IOException;
-import java.util.Map;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Objects;
 
 public class JySrtTools extends JFrame {
-    @Getter
-    private Map<String, JyDraft> drafts;
+    private List<JyDraft> drafts;
     @Getter
     @Setter
     private JyDraft currentSelectedDraft = null;
@@ -83,10 +83,11 @@ public class JySrtTools extends JFrame {
         }
 
         jyTextPanel = new JyTextPanel(this);
-        JTabbedPane tabPanel = new JTabbedPane();
-        tabPanel.setFont(tabPanel.getFont().deriveFont(16f));
-        tabPanel.add("草稿字幕處理", jyTextPanel);
-        add(tabPanel);
+//        JTabbedPane tabPanel = new JTabbedPane();
+//        tabPanel.setFont(tabPanel.getFont().deriveFont(16f));
+//        tabPanel.add("草稿字幕處理", jyTextPanel);
+//        add(tabPanel);
+        add(jyTextPanel);
         setJMenuBar(new JyMenuBar(this));
 
         progressDialog = new TranslateProgressDialog(this, true);
@@ -95,5 +96,17 @@ public class JySrtTools extends JFrame {
 
     public void loadDrafts() throws JySrtToolsException {
         drafts = JyUtils.getAllJyDrafts();
+    }
+
+    public List<JyDraft> getDrafts() {
+        return getDrafts(new JyDraftLastModifiedTimeComparator(), false);
+    }
+
+    public List<JyDraft> getDrafts(Comparator comp, boolean reverse) {
+        if (reverse)
+            drafts.sort(comp.reversed());
+        else
+            drafts.sort(comp);
+        return drafts;
     }
 }
