@@ -6,7 +6,7 @@ import app.jackychu.jysrttools.exception.JySrtToolsException;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.Map;
+import java.util.List;
 
 public class DraftListPanel extends JPanel {
     private final JySrtTools jySrtTools;
@@ -46,11 +46,11 @@ public class DraftListPanel extends JPanel {
                 jySrtTools.getJyTextPanel().getListPanel().reloadList(jySrtTools.getDrafts());
                 jySrtTools.getJyTextPanel().getTextsPanel().setSubtitles(null);
             } catch (JySrtToolsException jye) {
-                jySrtTools.getJyTextPanel().getActionPanel().enableButtons(false);
+                jySrtTools.getJyTextPanel().getActionPanel().enableButtons(false, true);
                 JOptionPane.showMessageDialog(jySrtTools,
                         new ErrorMessagePanel(jye), "重新載入草稿錯誤", JOptionPane.ERROR_MESSAGE);
             }
-            jySrtTools.getJyTextPanel().getActionPanel().enableButtons(false);
+            jySrtTools.getJyTextPanel().getActionPanel().enableButtons(false, true);
         });
     }
 
@@ -71,16 +71,14 @@ public class DraftListPanel extends JPanel {
         });
     }
 
-    public void reloadList(Map<String, JyDraft> drafts) {
+    public void reloadList(List<JyDraft> drafts) {
         list.removeAll();
         list.setModel(getListModel(drafts));
     }
 
-    private DraftListModel getListModel(Map<String, JyDraft> drafts) {
+    private DraftListModel getListModel(List<JyDraft> drafts) {
         DraftListModel model = new DraftListModel();
-        for (JyDraft draft : drafts.values()) {
-            model.addElement(draft);
-        }
+        model.addAll(drafts);
         return model;
     }
 }

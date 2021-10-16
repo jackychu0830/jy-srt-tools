@@ -161,8 +161,8 @@ public class JyUtils {
      * @return All drafts name and its fold path
      * @throws JySrtToolsException Parse json file error
      */
-    public static Map<String, JyDraft> getAllJyDrafts() throws JySrtToolsException {
-        Map<String, JyDraft> drafts = new HashMap<>();
+    public static List<JyDraft> getAllJyDrafts() throws JySrtToolsException {
+        List<JyDraft> drafts = new ArrayList<>();
         JSONObject draftJson = loadJsonData(
                 String.valueOf(Path.of(getPath(), ROOT_DRAFT_META_INFO_FILENAME).toAbsolutePath()));
         JSONArray allDraftStore = (JSONArray) draftJson.get("all_draft_store");
@@ -175,8 +175,9 @@ public class JyUtils {
             jyDraft.setFolderPath(draft.get("draft_fold_path").toString());
             jyDraft.setInfoFilename(draft.get("draft_json_file").toString());
             jyDraft.setCoverFilename(draft.get("draft_cover").toString());
+            jyDraft.setLastModifiedTime(Long.parseLong(draft.get("tm_draft_modified").toString()));
 
-            drafts.put(jyDraft.getName(), jyDraft);
+            drafts.add(jyDraft);
         }
 
         return drafts;
