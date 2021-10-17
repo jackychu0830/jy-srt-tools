@@ -191,6 +191,10 @@ public class JyUtils {
      * @throws JySrtToolsException Open/parse json file error
      */
     public static JSONObject loadJsonData(String filename) throws JySrtToolsException {
+        if (!(new File(filename)).exists()) {
+            throw new JySrtToolsException("開啟草稿檔案錯誤! " + System.lineSeparator() + "請新增剪映草稿後，再使用工具箱!");
+        }
+
         JSONParser jsonParser = new JSONParser();
         FileReader reader;
         try {
