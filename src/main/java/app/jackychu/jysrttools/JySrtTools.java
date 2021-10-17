@@ -83,10 +83,6 @@ public class JySrtTools extends JFrame {
         }
 
         jyTextPanel = new JyTextPanel(this);
-//        JTabbedPane tabPanel = new JTabbedPane();
-//        tabPanel.setFont(tabPanel.getFont().deriveFont(16f));
-//        tabPanel.add("草稿字幕處理", jyTextPanel);
-//        add(tabPanel);
         add(jyTextPanel);
         setJMenuBar(new JyMenuBar(this));
 
@@ -102,11 +98,25 @@ public class JySrtTools extends JFrame {
         return getDrafts(new JyDraftLastModifiedTimeComparator(), false);
     }
 
-    public List<JyDraft> getDrafts(Comparator comp, boolean reverse) {
+    public List<JyDraft> getDrafts(Comparator<JyDraft> comp, boolean reverse) {
         if (reverse)
             drafts.sort(comp.reversed());
         else
             drafts.sort(comp);
+        return drafts;
+    }
+
+    public List<JyDraft> filterDrafts(String text) {
+        if (text.trim().equals("")) {
+            for (JyDraft draft : drafts) {
+                draft.setHidden(false);
+            }
+        } else {
+            for (JyDraft draft : drafts) {
+                draft.setHidden(!draft.getName().contains(text));
+            }
+        }
+
         return drafts;
     }
 }
