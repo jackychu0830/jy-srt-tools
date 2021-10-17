@@ -25,6 +25,7 @@ public class JyDraft {
     private String coverFilename;
     private String folderPath;
     private long lastModifiedTime;
+    private boolean hidden = false;
 
     @Setter(AccessLevel.NONE)
     @Getter(AccessLevel.NONE)
