@@ -137,20 +137,12 @@ public class DraftListPanel extends JPanel {
         searchBox.getDocument().addDocumentListener(new DocumentListener() {
             @Override
             public void insertUpdate(DocumentEvent e) {
-                try {
-                    reloadList(jySrtTools.filterDrafts(e.getDocument().getText(0, e.getLength())));
-                } catch (BadLocationException ex) {
-                    reloadList(jySrtTools.filterDrafts(searchBox.getText()));
-                }
+                reloadList(jySrtTools.filterDrafts(searchBox.getText()));
             }
 
             @Override
             public void removeUpdate(DocumentEvent e) {
-                try {
-                    reloadList(jySrtTools.filterDrafts(e.getDocument().getText(0, e.getLength())));
-                } catch (BadLocationException ex) {
-                    reloadList(jySrtTools.filterDrafts(searchBox.getText()));
-                }
+                reloadList(jySrtTools.filterDrafts(searchBox.getText()));
             }
 
             @Override
@@ -178,7 +170,7 @@ public class DraftListPanel extends JPanel {
         } else if (btn == btnTimeSort) {
             btnTimeSort.addActionListener(e -> {
                 Icon icon = btnTimeSort.getIcon();
-                List<JyDraft> drafts = null;
+                List<JyDraft> drafts;
                 if (icon == clockwiseIcon) {
                     drafts = jySrtTools.getDrafts(new JyDraftLastModifiedTimeComparator(), true);
                     btnTimeSort.setIcon(counterclockwiseIcon);
