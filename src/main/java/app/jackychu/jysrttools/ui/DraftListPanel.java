@@ -10,7 +10,6 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import javax.swing.text.BadLocationException;
 import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -57,7 +56,7 @@ public class DraftListPanel extends JPanel {
 
         JPanel searchPanel = new JPanel();
         searchPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
-        searchBox = new SearchBox(50);
+        searchBox = new SearchBox(28);
         addSearchBoxListener();
         searchPanel.add(searchBox);
         btnAzSort = new JButton();
