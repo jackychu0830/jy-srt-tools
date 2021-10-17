@@ -75,13 +75,13 @@ public class SearchBox extends JTextField implements KeyListener, MouseListener,
                 margin = BorderFactory.createEmptyBorder(0, searchIcon.getIconWidth() + ICON_SPACING, 0, 0);
             } else {
                 if (showCleanIcon && !getText().equals("")) {
-                    if (searchIcon == null){
+                    if (searchIcon == null) {
                         margin = BorderFactory.createEmptyBorder(0, 0, 0, cleanIcon.getIconWidth() + ICON_SPACING);
                     } else {
                         margin = BorderFactory.createEmptyBorder(0, searchIcon.getIconWidth() + ICON_SPACING, 0, cleanIcon.getIconWidth() + ICON_SPACING);
                     }
                 } else {
-                    if (searchIcon == null){
+                    if (searchIcon == null) {
                         margin = BorderFactory.createEmptyBorder(0, 0, 0, 0);
                     } else {
                         margin = BorderFactory.createEmptyBorder(0, searchIcon.getIconWidth() + ICON_SPACING, 0, 0);
