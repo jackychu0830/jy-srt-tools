@@ -56,7 +56,7 @@ public class DraftListPanel extends JPanel {
 
         JPanel searchPanel = new JPanel();
         searchPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
-        searchBox = new SearchBox(28);
+        searchBox = new SearchBox(32);
         addSearchBoxListener();
         searchPanel.add(searchBox);
         btnAzSort = new JButton();
