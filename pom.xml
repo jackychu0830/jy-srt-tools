@@ -24,6 +24,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
+                <version>3.0.2</version>
                 <configuration>
                     <archive>
                         <manifest>
@@ -162,7 +163,6 @@
                             <archive>
                                 <manifest>
                                     <addClasspath>true</addClasspath>
-                                    <classpathPrefix>lib/</classpathPrefix>
                                     <mainClass>app.jackychu.jysrttools.JySrtTools</mainClass>
                                 </manifest>
                             </archive>
