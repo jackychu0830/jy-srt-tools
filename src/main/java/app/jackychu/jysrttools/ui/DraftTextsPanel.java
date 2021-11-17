@@ -35,12 +35,15 @@ public class DraftTextsPanel extends JPanel {
 
         InputMap im = subtitleTable.getInputMap(JTable.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
         KeyStroke enter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
-        subtitleTable.setSurrendersFocusOnKeystroke(true);
-        subtitleTable.getActionMap().put(im.get(enter), new AbstractAction() {
-            @Override
+        im.put(enter, "startEditing"); // Change action from "selectNextRow" to "startEditing"
+//        im.getParent().put(enter, "startEditing"); // Can enter edit mode. However, only focus on 字幕 cell
+        subtitleTable.getActionMap().put(im.get(enter), new AbstractAction() { // Redefine "startEditing" action
             public void actionPerformed(ActionEvent e) {
                 int row = subtitleTable.getSelectedRow();
-                subtitleTable.editCellAt(row, 3);
+                subtitleTable.editCellAt(row, 3, e);
+//                subtitleTable.editCellAt(row, 3, new KeyEvent((Component) e.getSource(), 401, e.getWhen(),
+//                        e.getModifiers(), 10, '\n' ));
+                ((SubtitleCellEditor)subtitleTable.getCellEditor(row, 3)).focus();
             }
         });
 
@@ -83,6 +86,8 @@ public class DraftTextsPanel extends JPanel {
             jySrtTools.getJyTextPanel().getActionPanel().enableButtons(false);
         } else {
             subtitleTable.setModel(new DraftSubtitleTableModel(draft.getDraftSubtitles()));
+            subtitleTable.grabFocus();
+            subtitleTable.setRowSelectionInterval(0,0);
             jySrtTools.getJyTextPanel().getActionPanel().enableButtons(true);
         }
         setTableColumnSize();
