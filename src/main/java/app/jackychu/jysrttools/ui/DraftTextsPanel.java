@@ -9,6 +9,8 @@ import lombok.Getter;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 
 public class DraftTextsPanel extends JPanel {
@@ -30,6 +32,18 @@ public class DraftTextsPanel extends JPanel {
         subtitleTable.getTableHeader().setFont(subtitleTable.getTableHeader().getFont().deriveFont(16f));
         subtitleTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         setTableColumnSize();
+
+        InputMap im = subtitleTable.getInputMap(JTable.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        KeyStroke enter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
+        subtitleTable.setSurrendersFocusOnKeystroke(true);
+        subtitleTable.getActionMap().put(im.get(enter), new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int row = subtitleTable.getSelectedRow();
+                subtitleTable.editCellAt(row, 3);
+            }
+        });
+
 
         subtitleTable.addPropertyChangeListener("tableCellEditor", e -> {
             if (!subtitleTable.isEditing()) {
