@@ -27,8 +27,8 @@ public class Subtitle implements Comparable<Subtitle> {
         long sec = time / 1000 / 1000 % 60;
         long min = time / 1000 / 1000 / 60 % 60;
         long hour = time / 1000 / 1000 / 60 / 60;
-        return String.format("%02d:%02d:%02d,%s", hour, min, sec,
-                StringUtils.rightPad(String.valueOf(ms), 3, "0"));
+
+        return String.format("%02d:%02d:%02d,%03d", hour, min, sec, ms);
     }
 
     /**
