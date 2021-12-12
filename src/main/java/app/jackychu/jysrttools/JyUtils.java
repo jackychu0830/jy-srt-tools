@@ -369,7 +369,12 @@ public class JyUtils {
                         sub.setText(line.trim());
                         subtitles.add(sub);
                         subLineCount = 3;
-                    } // else empty line
+                    } else { // multiline text
+                        if (!line.trim().equals("")) {
+                            sub.setText(sub.getText() + System.lineSeparator() + line.trim());
+                            subLineCount++;
+                        }
+                    }
                 }
             }
 
