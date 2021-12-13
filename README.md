@@ -9,12 +9,14 @@
 5. 刪除影片字幕
 
 ## 安裝說明
-## 安裝說明
+https://youtu.be/OJCRbiwMmlQ
+
 1. 安裝 Java 11 執行環境 (下載: https://www.microsoft.com/openjdk)
 2. 下載剪映字幕工具箱式 [2.3.245 版](https://github.com/jackychu0830/jy-srt-tools/releases/download/2.3.245-Win/jy-srt-tools-2.3.245-Win.jar)
 3. 滑鼠雙擊 jy-srt-tools-2.3.245-Win.jar 執行程式
 
 ## 使用說明
+https://youtu.be/td1EO3I1jJA
 
 ## 執行畫面
 
