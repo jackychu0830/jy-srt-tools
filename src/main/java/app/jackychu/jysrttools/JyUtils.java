@@ -15,7 +15,7 @@ import java.util.*;
  * Some utils for JY video
  */
 public class JyUtils {
-    final static String ROOT_DRAFT_META_INFO_FILENAME = "root_draft_meta_info.json";
+    final static String ROOT_DRAFT_META_INFO_FILENAME = "root_meta_info.json";
 
     /**
      * Get jr-srt-tools version number
