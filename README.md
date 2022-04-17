@@ -14,8 +14,8 @@ https://youtu.be/DotEJFZ2ZEM
 1. 安裝 Java 11 執行環境 (https://www.azul.com/downloads/?version=java-11-lts&os=macos&package=jdk)
    * Intel 選擇 x86 64-bit
    * M1 選擇 ARM 64-bit
-2. 下載剪映字幕工具箱式 [2.3.251 版](https://github.com/jackychu0830/jy-srt-tools/releases/download/2.3.251-Mac/jy-srt-tools-2.3.251-Mac.jar)
-3. 滑鼠雙擊 jy-srt-tools-2.3.251-Mac.jar 執行程式
+2. 下載剪映字幕工具箱式 [2.3.290 版](https://github.com/jackychu0830/jy-srt-tools/releases/download/2.3.290-Mac/jy-srt-tools-2.3.290-Mac.jar)
+3. 滑鼠雙擊 jy-srt-tools-2.3.290-Mac.jar 執行程式
 
 ## 使用說明
 https://youtu.be/td1EO3I1jJA
