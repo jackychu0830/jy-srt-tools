@@ -1,0 +1,1 @@
+<font id=\"\" path=\"${font_path}\"><color=(1.000000, 1.000000, 1.000000, 1.000000)><size=5.000000>${text}</size></color></font>

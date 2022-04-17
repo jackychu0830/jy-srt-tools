@@ -84,21 +84,15 @@ public class JyMenuBar extends JMenuBar {
     private void addMenuItemActionListener() {
         ActionListener actionListener = e -> {
             if (jySrtTools.getCurrentSelectedDraft() != null) {
-                try {
-                    if (jySrtTools.getCurrentSelectedDraft().getDraftTextIds().size() > 0) {
-//                            jySrtTools.getJyTextPanel().getTextsPanel().getSubtitleTable().putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
-                        if (jySrtTools.getJyTextPanel().getTextsPanel().getSubtitleTable().isEditing()) {
-                            jySrtTools.getJyTextPanel().getTextsPanel().getSubtitleTable().getCellEditor().cancelCellEditing();
-                        }
-                        jySrtTools.getFindReplaceDialog().setVisible(true);
-                        jySrtTools.getFindReplaceDialog().setReplaceMode(e.getSource() == replaceMenuItem);
-                    } else {
-                        JOptionPane.showMessageDialog(jySrtTools,
-                                "請選選擇有字幕的草稿檔", "找不到字幕", JOptionPane.INFORMATION_MESSAGE);
-                    }
-                } catch (JySrtToolsException ex) {
+                if (jySrtTools.getCurrentSelectedDraft().getSubtitles().isEmpty()) {
                     JOptionPane.showMessageDialog(jySrtTools,
-                            new ErrorMessagePanel(ex), "請選選擇有字幕的草稿檔", JOptionPane.ERROR_MESSAGE);
+                            "請選選擇有字幕的草稿檔", "找不到字幕", JOptionPane.INFORMATION_MESSAGE);
+                } else {
+                    if (jySrtTools.getJyTextPanel().getTextsPanel().getSubtitleTable().isEditing()) {
+                        jySrtTools.getJyTextPanel().getTextsPanel().getSubtitleTable().getCellEditor().cancelCellEditing();
+                    }
+                    jySrtTools.getFindReplaceDialog().setVisible(true);
+                    jySrtTools.getFindReplaceDialog().setReplaceMode(e.getSource() == replaceMenuItem);
                 }
             }
 
