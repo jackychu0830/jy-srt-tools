@@ -69,7 +69,7 @@ public class DraftTextsPanel extends JPanel {
 
     public void saveSubtitleChanges(Subtitle sub) {
         try {
-            this.jySrtTools.getCurrentSelectedDraft().updateDraftText(sub.getId(), sub.getText());
+            this.jySrtTools.getCurrentSelectedDraft().updateDraftSubtitle(sub);
             JyUtils.saveDraft(this.jySrtTools.getCurrentSelectedDraft());
         } catch (JySrtToolsException ex) {
             JOptionPane.showMessageDialog(this,
@@ -82,10 +82,10 @@ public class DraftTextsPanel extends JPanel {
         setTableColumnSize();
 
         if (draft == null) return;
-        if (draft.getDraftTextIds().size() == 0) {
+        if (draft.getSubtitles().isEmpty()) {
             jySrtTools.getJyTextPanel().getActionPanel().enableButtons(false);
         } else {
-            subtitleTable.setModel(new DraftSubtitleTableModel(draft.getDraftSubtitles()));
+            subtitleTable.setModel(new DraftSubtitleTableModel(draft.getSubtitles()));
             subtitleTable.grabFocus();
             subtitleTable.setRowSelectionInterval(0,0);
             jySrtTools.getJyTextPanel().getActionPanel().enableButtons(true);

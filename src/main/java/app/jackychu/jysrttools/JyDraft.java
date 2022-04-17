@@ -1,10 +1,7 @@
 package app.jackychu.jysrttools;
 
 import app.jackychu.jysrttools.exception.JySrtToolsException;
-import lombok.AccessLevel;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.apache.commons.text.StringSubstitutor;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -27,70 +24,78 @@ public class JyDraft {
     private long lastModifiedTime;
     private boolean hidden = false;
 
-    @Setter(AccessLevel.NONE)
-    @Getter(AccessLevel.NONE)
+//    @Setter(AccessLevel.NONE)
+//    @Getter(AccessLevel.NONE)
     // id: text
-    private Map<String, String> texts;
+//    private Map<String, String> texts;
 
-    @Setter(AccessLevel.NONE)
-    @Getter(AccessLevel.NONE)
-    private List<String> textIds;
+//    @Setter(AccessLevel.NONE)
+//    @Getter(AccessLevel.NONE)
+//    private List<String> textIds;
 
-    @Setter(AccessLevel.NONE)
     @Getter(AccessLevel.NONE)
     private List<Subtitle> subtitles;
 
-    /**
-     * Get all texts in this draft
-     *
-     * @return Map of texts
-     * @throws JySrtToolsException Parse draft info json error
-     */
-    public Map<String, String> getDraftTexts() throws JySrtToolsException {
-        // Force clean exist texts
-        this.texts = new HashMap<>();
-        this.textIds = new ArrayList<>();
+//    /**
+//     * Get all texts in this draft
+//     *
+//     * @return Map of texts
+//     * @throws JySrtToolsException Parse draft info json error
+//     */
+//    public Map<String, String> getDraftTexts() throws JySrtToolsException {
+//        // Force clean exist texts
+//        this.texts = new HashMap<>();
+//        this.textIds = new ArrayList<>();
+//
+//        if (this.info == null) {
+//            loadJyDraftInfo();
+//        }
+//
+//        JSONArray txts = (JSONArray) ((JSONObject) this.info.get("materials")).get("texts");
+//        for (Object txt : txts.toArray()) {
+//            Object txtId = ((JSONObject) txt).get("id");
+//            Object txtObj = ((JSONObject) txt).get("content");
+//            Object txtType = ((JSONObject) txt).get("type");
+//            if (txtType.toString().equals("subtitle")) {
+//                this.texts.put(txtId.toString(), txtObj.toString());
+//                this.textIds.add(txtId.toString());
+//            }
+//        }
+//
+//        return this.texts;
+//    }
 
-        if (this.info == null) {
-            loadJyDraftInfo();
+//    /**
+//     * Update specified draft text
+//     *
+//     * @param id    text id
+//     * @param value text
+//     */
+//    public void updateDraftText(String id, String value) {
+//        if (texts.containsKey(id)) {
+//            this.texts.put(id, value);
+//            this.updateDraftInfoTexts(this.texts);
+//        }
+//    }
+
+//    /**
+//     * Get all text ids inorder
+//     *
+//     * @return The list of text ids
+//     * @throws JySrtToolsException Parse draft info json error
+//     */
+//    public List<String> getDraftTextIds() throws JySrtToolsException {
+//        this.getDraftTexts();
+//        return this.textIds;
+//    }
+
+    @SneakyThrows
+    public List<Subtitle> getSubtitles() {
+        if (this.subtitles == null) {
+            this.subtitles = new ArrayList<>();
+            loadDraftSubtitles();
         }
-
-        JSONArray txts = (JSONArray) ((JSONObject) this.info.get("materials")).get("texts");
-        for (Object txt : txts.toArray()) {
-            Object txtId = ((JSONObject) txt).get("id");
-            Object txtObj = ((JSONObject) txt).get("content");
-            Object txtType = ((JSONObject) txt).get("type");
-            if (txtType.toString().equals("subtitle")) {
-                this.texts.put(txtId.toString(), txtObj.toString());
-                this.textIds.add(txtId.toString());
-            }
-        }
-
-        return this.texts;
-    }
-
-    /**
-     * Update specified draft text
-     *
-     * @param id    text id
-     * @param value text
-     */
-    public void updateDraftText(String id, String value) {
-        if (texts.containsKey(id)) {
-            this.texts.put(id, value);
-            this.updateDraftInfoTexts(this.texts);
-        }
-    }
-
-    /**
-     * Get all text ids inorder
-     *
-     * @return The list of text ids
-     * @throws JySrtToolsException Parse draft info json error
-     */
-    public List<String> getDraftTextIds() throws JySrtToolsException {
-        this.getDraftTexts();
-        return this.textIds;
+        return this.subtitles;
     }
 
     /**
@@ -99,38 +104,47 @@ public class JyDraft {
      * @return List of subtitle (in time order)
      * @throws JySrtToolsException Parse draft info json error
      */
-    public List<Subtitle> getDraftSubtitles() throws JySrtToolsException {
-        if (this.texts == null) {
-            getDraftTexts();
+    public List<Subtitle> loadDraftSubtitles() throws JySrtToolsException {
+        if (this.info == null) {
+            loadJyDraftInfo();
         }
 
-        if (subtitles == null) {
-            subtitles = new ArrayList<>();
-            JSONArray tracks = (JSONArray) this.info.get("tracks");
-            for (Object track : tracks.toArray()) {
-                JSONObject tk = (JSONObject) track;
-                // only flag=2 and type=text is subtitle
-                if (!((tk.get("flag").toString().equals("1") || tk.get("flag").toString().equals("2")) &&
-                        tk.get("type").toString().equals("text"))) continue;
-                JSONArray segments = (JSONArray) tk.get("segments");
-                for (Object segment : segments.toArray()) {
-                    String materialId = ((JSONObject) segment).get("material_id").toString();
-                    if (this.texts.containsKey(materialId)) {
-                        Subtitle sub = new Subtitle();
-                        sub.setId(materialId);
-                        sub.setText(this.texts.get(materialId));
-                        JSONObject target = (JSONObject) ((JSONObject) segment).get("target_timerange");
-                        sub.setDuration(Long.parseLong(target.get("duration").toString()));
-                        sub.setStartTime(Long.parseLong(target.get("start").toString()));
-                        sub.setEndTime(sub.getStartTime() + sub.getDuration());
-                        subtitles.add(sub);
-                    }
+        Map<String, String> texts = new HashMap<>();
+        JSONArray txts = (JSONArray) ((JSONObject) this.info.get("materials")).get("texts");
+        for (Object txt : txts.toArray()) {
+            Object txtId = ((JSONObject) txt).get("id");
+            Object txtObj = ((JSONObject) txt).get("content");
+            Object txtType = ((JSONObject) txt).get("type");
+            if (txtType.toString().equals("subtitle")) {
+                texts.put(txtId.toString(), txtObj.toString());
+//                this.textIds.add(txtId.toString());
+            }
+        }
+
+        JSONArray tracks = (JSONArray) this.info.get("tracks");
+        for (Object track : tracks.toArray()) {
+            JSONObject tk = (JSONObject) track;
+            // only flag=2 and type=text is subtitle
+            if (!((tk.get("flag").toString().equals("1") || tk.get("flag").toString().equals("2")) &&
+                    tk.get("type").toString().equals("text"))) continue;
+            JSONArray segments = (JSONArray) tk.get("segments");
+            for (Object segment : segments.toArray()) {
+                String materialId = ((JSONObject) segment).get("material_id").toString();
+                if (texts.containsKey(materialId)) {
+                    Subtitle sub = new Subtitle();
+                    sub.setId(materialId);
+                    sub.setFormattedText(texts.get(materialId));
+                    JSONObject target = (JSONObject) ((JSONObject) segment).get("target_timerange");
+                    sub.setDuration(Long.parseLong(target.get("duration").toString()));
+                    sub.setStartTime(Long.parseLong(target.get("start").toString()));
+                    sub.setEndTime(sub.getStartTime() + sub.getDuration());
+                    this.subtitles.add(sub);
                 }
             }
 
-            Collections.sort(subtitles);
+            Collections.sort(this.subtitles);
             int index = 1;
-            for (Subtitle sub : subtitles) {
+            for (Subtitle sub : this.subtitles) {
                 sub.setNum(index++);
             }
         }
@@ -155,19 +169,19 @@ public class JyDraft {
     }
 
     /**
-     * Update draft text to info object
+     * Update draft subtitle to info object
      *
-     * @param texts New texts which want to update
+     * @param subtitle New subtitles which want to update
      */
-    public void updateDraftInfoTexts(Map<String, String> texts) {
-//        this.subtitles = null;
-        this.texts = texts;
+    public void updateDraftSubtitle(Subtitle subtitle) {
         JSONArray originTexts;
         originTexts = (JSONArray) ((JSONObject) this.info.get("materials")).get("texts");
         for (Object originText : originTexts.toArray()) {
             String id = ((JSONObject) originText).get("id").toString();
-            if (this.texts.containsKey(id)) {
-                ((JSONObject) originText).put("content", texts.get(id));
+            int index = this.subtitles.indexOf(new Subtitle(id));
+            if (index != -1){
+                Subtitle sub = this.subtitles.get(index);
+                ((JSONObject) originText).put("content", sub.getFormattedText());
             }
         }
     }
@@ -178,8 +192,8 @@ public class JyDraft {
      * @throws JySrtToolsException Load draft texts fail
      */
     public void deleteDraftSubtitles() throws JySrtToolsException {
-        if (this.texts == null) {
-            getDraftTexts();
+        if (this.subtitles == null || this.subtitles.isEmpty()) {
+            loadDraftSubtitles();
         }
 
         // Remove texts content
@@ -202,7 +216,7 @@ public class JyDraft {
             JSONArray segments = (JSONArray) tk.get("segments");
             for (Object segment : segments.toArray()) {
                 String materialId = ((JSONObject) segment).get("material_id").toString();
-                if (this.texts.containsKey(materialId)) {
+                if (this.subtitles.contains(new Subtitle(materialId))) {
                     String extraMaterialId = null;
                     if (((JSONObject) segment).containsKey("extra_material_refs")) {
                         extraMaterialId = ((JSONArray) ((JSONObject) segment).get("extra_material_refs")).get(0).toString();
@@ -269,7 +283,7 @@ public class JyDraft {
 
             String textTemp = DraftTemplates.getTemplate("draft_text");
             values = new HashMap<>();
-            values.put("content", sub.getText());
+            values.put("content", sub.getFormattedText());
             values.put("font_path", DraftTemplates.getDefaultFontPath());
             String textId = UUID.randomUUID().toString().toUpperCase();
             values.put("id", textId);
