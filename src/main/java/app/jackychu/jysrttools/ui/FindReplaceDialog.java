@@ -121,7 +121,7 @@ public class FindReplaceDialog extends JDialog {
             List<Subtitle> subtitles;
             int foundCount = 0;
             try {
-                subtitles = jySrtTools.getCurrentSelectedDraft().getDraftSubtitles();
+                subtitles = jySrtTools.getCurrentSelectedDraft().getSubtitles();
                 int selectedIndex = tbl.getSelectedRow();
                 if (e.getSource() == replaceButton) {
                     if (selectedIndex != -1 && !Objects.equals(str, "")) {

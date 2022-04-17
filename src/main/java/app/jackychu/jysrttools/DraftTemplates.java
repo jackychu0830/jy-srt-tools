@@ -25,6 +25,29 @@ public class DraftTemplates {
         return temp;
     }
 
+    public static String getDefaultSubtitleFormat() {
+        String os = System.getProperty("os.name");
+        String fontPath = null;
+        if (os.toLowerCase(Locale.ROOT).contains("windows")) {
+            fontPath = WIN_DEFAULT_FONT_PATH;
+        } else {
+            fontPath = MAC_DEFAULT_FONT_PATH;
+        }
+
+        String format = "${text}";
+        try {
+            InputStream in = DraftTemplates.class.getClassLoader().getResourceAsStream("draft_templates/subtitle_format.txt");
+            byte[] data = in.readAllBytes();
+            format = new String(data);
+            format = format.replace("${font_path}", fontPath);
+        } catch (IOException | RuntimeException e) {
+            JOptionPane.showMessageDialog(null,
+                    new ErrorMessagePanel(e), "讀取預設字幕格式失敗", JOptionPane.ERROR_MESSAGE);
+        }
+
+        return format;
+    }
+
     public static String getDefaultFontPath() {
         String os = System.getProperty("os.name");
         if (os.toLowerCase(Locale.ROOT).contains("windows")) {
@@ -32,6 +55,5 @@ public class DraftTemplates {
         } else {
             return MAC_DEFAULT_FONT_PATH;
         }
-
     }
 }

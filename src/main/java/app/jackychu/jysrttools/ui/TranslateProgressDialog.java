@@ -2,11 +2,13 @@ package app.jackychu.jysrttools.ui;
 
 import app.jackychu.jysrttools.JyDraft;
 import app.jackychu.jysrttools.JyUtils;
+import app.jackychu.jysrttools.Subtitle;
 import com.github.houbb.opencc4j.util.ZhConverterUtil;
 import com.github.houbb.opencc4j.util.ZhTwConverterUtil;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -54,15 +56,15 @@ public class TranslateProgressDialog extends JDialog {
                 int percentage;
 
                 try {
-                    Map<String, String> texts = draft.getDraftTexts();
-                    Map<String, String> newTexts = new HashMap<>();
+                    java.util.List<Subtitle> newSubs = new ArrayList<>();
 
-                    for (String txtId : texts.keySet()) {
-                        percentage = (int) ((++i * 1.0) / texts.size() * 100);
+                    int size = draft.getSubtitles().size();
+                    for (Subtitle sub : draft.getSubtitles()) {
+                        percentage = (int) ((++i * 1.0) / size * 100);
                         progressBar.setValue(percentage);
                         label.setText(String.format("翻譯中… %d%%", percentage));
 
-                        String newStr = texts.get(txtId);
+                        String newStr = sub.getText();
                         if (ZhConverterUtil.isTraditional(newStr)) continue;
                         if (type.equals("tcTranslate")) {
                             newStr = ZhConverterUtil.toTraditional(newStr);
@@ -70,11 +72,11 @@ public class TranslateProgressDialog extends JDialog {
                             newStr = ZhTwConverterUtil.toTraditional(newStr);
                         }
 
-                        newTexts.put(txtId, newStr);
+                        sub.setText(newStr);
+                        draft.updateDraftSubtitle(sub);
                     }
 
                     // Save translated texts back to Jy draft
-                    draft.updateDraftInfoTexts(newTexts);
                     JyUtils.saveDraft(draft);
 
                     label.setText("翻譯完畢");

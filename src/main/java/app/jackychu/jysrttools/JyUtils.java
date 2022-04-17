@@ -221,7 +221,7 @@ public class JyUtils {
      * @throws JySrtToolsException get SRT format fail
      */
     public static String getDraftSubtitlesSRT(JyDraft draft) throws JySrtToolsException {
-        List<Subtitle> subtitles = draft.getDraftSubtitles();
+        List<Subtitle> subtitles = draft.getSubtitles();
         StringBuilder srt = new StringBuilder();
 
         for (Subtitle sub : subtitles) {
@@ -254,8 +254,8 @@ public class JyUtils {
      */
     public static String getDraftSubtitlesTxt(JyDraft draft) throws JySrtToolsException {
         StringBuilder sb = new StringBuilder();
-        for (String id : draft.getDraftTextIds()) {
-            sb.append(draft.getDraftTexts().get(id)).append(System.lineSeparator());
+        for (Subtitle sub : draft.getSubtitles()) {
+            sb.append(sub.getText()).append(System.lineSeparator());
         }
         return sb.toString();
     }
@@ -347,6 +347,7 @@ public class JyUtils {
         Subtitle sub = null;
         int subLineCount = 1;
         List<Subtitle> subtitles = new ArrayList<>();
+        String format = DraftTemplates.getDefaultSubtitleFormat();
         try (BufferedReader br = new BufferedReader(reader)) {
             for (String line; (line = br.readLine()) != null; ) {
 
@@ -356,6 +357,7 @@ public class JyUtils {
                 int num = StringUtils.isNumeric(line) ? Integer.parseInt(line) : -1;
                 if (num != -1) { //number
                     sub = new Subtitle();
+                    sub.setFormat(format);
                     subLineCount = 1;
                     sub.setNum(num);
                 } else {
