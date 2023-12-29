@@ -356,7 +356,7 @@ public class JyUtils {
                 int num = StringUtils.isNumeric(line) ? Integer.parseInt(line) : -1;
                 if (num != -1) { //number
                     sub = new Subtitle();
-                    sub.setFormat(format);
+                    sub.setContentFormat(format);
                     subLineCount = 1;
                     sub.setNum(num);
                 } else {

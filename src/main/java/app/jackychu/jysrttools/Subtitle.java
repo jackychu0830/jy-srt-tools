@@ -5,6 +5,10 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 import java.util.Objects;
 import java.util.regex.Matcher;
@@ -20,7 +24,7 @@ public class Subtitle implements Comparable<Subtitle> {
     private String findingText;
     private boolean found;
     private String text;
-    private String format;
+    private String contentFormat;
 
     /**
      * Convert time from ms to SRT time string format
@@ -81,25 +85,24 @@ public class Subtitle implements Comparable<Subtitle> {
         return Objects.hash(id, num, text, startTime, endTime, duration);
     }
 
-    public void setFormattedText(String str) {
-        this.text = str;
-        this.format = "${text}";
-        Pattern pattern = Pattern.compile("<font.*>\\[([\\s\\S]*)\\]<\\/font>"); //有做任何格式更動的字幕
-        Matcher matcher = pattern.matcher(str);
-        if (matcher.find()) {
-            this.text = matcher.group(1).toString();
-            this.format = str.replace(this.text, "${text}");
-        } else {
-            pattern = Pattern.compile("<size=.*>([\\s\\S]*)<\\/size>"); // 沒做任何格式更動的字幕
-            matcher = pattern.matcher(str);
-            if (matcher.find()) {
-                this.text = matcher.group(1).toString();
-                this.format = str.replace(this.text, "${text}");
-            }
-        }
-    }
-
     public String getFormattedText() {
-        return this.format.replace("${text}", this.text);
+        try {
+            JSONObject content = (JSONObject) (new JSONParser()).parse(this.contentFormat);
+            content.put("text", this.text);
+            JSONArray range = new JSONArray();
+            range.add(0);
+            range.add(this.text.length());
+            JSONArray styles = (JSONArray) content.get("styles");
+            JSONObject style = (JSONObject) styles.get(0);
+            style.put("range", range);
+            styles.set(0, style);
+            content.put("styles", styles);
+            return content.toString();
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return this.contentFormat.replace("${text}", this.text);
+        }
+
+
     }
 }
