@@ -3,6 +3,7 @@ package app.jackychu.jysrttools;
 import app.jackychu.jysrttools.ui.ErrorMessagePanel;
 
 import javax.swing.*;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Locale;
@@ -36,7 +37,8 @@ public class DraftTemplates {
 
         String format = "${text}";
         try {
-            InputStream in = DraftTemplates.class.getClassLoader().getResourceAsStream("draft_templates/subtitle_format.txt");
+            InputStream in = DraftTemplates.class.getClassLoader().getResourceAsStream("draft_templates/draft_subtitle_content.json");
+//            InputStream in = new FileInputStream("/Users/jacky.chu/workspace/jy-srt-tools/src/main/resources/draft_templates/draft_subtitle_content.json");
             byte[] data = in.readAllBytes();
             format = new String(data);
             format = format.replace("${font_path}", fontPath);
